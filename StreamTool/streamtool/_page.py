@@ -30,25 +30,25 @@ class Page:
         self.all_buttons: list[Button] = []
         self.all_button_names: list[str] = []
 
-        self.html_part1_path = f"html_creation_files/standard_files/html_file_part1.txt"
-        self.html_part3_path = f"html_creation_files/standard_files/html_file_part3.txt"
-        self.html_part5_path = f"html_creation_files/standard_files/html_file_part5.txt"
+        self.html_part1_path = f"resources/html_creation_files/standard_files/html_file_part1.txt"
+        self.html_part3_path = f"resources/html_creation_files/standard_files/html_file_part3.txt"
+        self.html_part5_path = f"resources/html_creation_files/standard_files/html_file_part5.txt"
 
     @property
     def html_part2_path(self):
-        return f"html_creation_files/{self.name}/html_file_part2.txt"
+        return f"resources/html_creation_files/{self.name}/html_file_part2.txt"
 
     @property
     def html_part4_path(self):
-        return f"html_creation_files/{self.name}/html_file_part4.txt"
+        return f"resources/html_creation_files/{self.name}/html_file_part4.txt"
 
     @property
     def _html_directory_path(self):
-        return f"html_creation_files/{self.name}"
+        return f"resources/html_creation_files/{self.name}"
 
     @property
     def _html_template_path(self):
-        return f"templates/{self.name}.html"
+        return f"resources/templates/{self.name}.html"
 
     @property
     def name(self):

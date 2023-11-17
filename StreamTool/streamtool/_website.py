@@ -30,14 +30,14 @@ class Website:
     one_website_made: bool = False
 
     def __init__(self, use_obs_websockets=False):
+        reset_server_files()
+
         self._app = Flask(__name__)
         self.all_pages: list[Page] = []
         self.all_page_names: list = []
         self.index_page = self.add_page('index')
         self.buttons_with_functions: dict[str, Button] = {}
         Website.one_website_made = True
-
-        reset_server_files()
 
         # setup use of images for 404 page
         self._app.static_folder = 'static'

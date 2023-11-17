@@ -1,5 +1,5 @@
 from obswebsocket import obsws  # noqa: E402
-from Websockets_Auth import websocket_host, websocket_port, websocket_password
+from .Websockets_Auth import websocket_host, websocket_port, websocket_password
 
 ##########################################################
 ##########################################################

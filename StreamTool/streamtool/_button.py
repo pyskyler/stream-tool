@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from _formatting_and_converting import convert_to_pascal_case, format_url
+from ._formatting_and_converting import convert_to_pascal_case, format_url
 from .exceptions import DuplicateButtonNameError, ButtonNameSyntaxError
 from ._data import restricted_use_names
 

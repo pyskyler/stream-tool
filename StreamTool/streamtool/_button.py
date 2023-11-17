@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from _formatting_and_converting import convert_to_pascal_case, format_url
-from exceptions import DuplicateButtonNameError, ButtonNameSyntaxError
-from _data import restricted_use_names
+from .exceptions import DuplicateButtonNameError, ButtonNameSyntaxError
+from ._data import restricted_use_names
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from _page import Page
+    from ._page import Page
 
 
 class Button:

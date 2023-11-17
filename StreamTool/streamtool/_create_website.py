@@ -1,6 +1,6 @@
-from exceptions import *
+from .exceptions import *
 
-from _website import Website
+from ._website import Website
 
 
 def create_website(*args) -> Website:

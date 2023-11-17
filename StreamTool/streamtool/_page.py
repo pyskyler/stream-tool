@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import os
 
-from exceptions import DuplicatePageNameError
-from _data import restricted_use_names
+from .exceptions import DuplicatePageNameError
+from ._data import restricted_use_names
 
 from typing import TYPE_CHECKING
 
-from _button import Button
+from ._button import Button
 if TYPE_CHECKING:
-    from _website import Website
+    from ._website import Website
 
 
 class Page:

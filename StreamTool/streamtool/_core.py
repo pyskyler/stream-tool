@@ -1,5 +1,5 @@
-import _create_website
-from _website import Website
+from . import _create_website
+from ._website import Website
 
 
 def create_website(use_obs_websockets=False) -> Website:

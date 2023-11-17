@@ -1,4 +1,4 @@
-import _data
+from . import _data
 from obswebsocket import requests
 
 _PLAY_INPUT = "OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PLAY"

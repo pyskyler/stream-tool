@@ -6,14 +6,14 @@ from flask import Flask, render_template
 
 from typing import TYPE_CHECKING
 
-from _page import Page
+from ._page import Page
 
-import _data
+from . import _data
 
-from _create_obs_websocket_manager import create_obs_websocket_manager
+from ._create_obs_websocket_manager import create_obs_websocket_manager
 
 if TYPE_CHECKING:
-    from _button import Button
+    from ._button import Button
 
 
 class Website:

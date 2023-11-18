@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from .exceptions import DuplicatePageNameError
 from ._data import restricted_use_names
+from._formatting_and_converting import format_page_name
 
 from typing import TYPE_CHECKING
 
@@ -35,7 +36,6 @@ class Page:
     def name(self):
         return self._name
 
-    # TODO: deal with names that can't work ie. spaces maybe other things
     @name.setter
     def name(self, name):
         if self.name is not None:
@@ -44,6 +44,8 @@ class Page:
             restricted_use_names.remove(previous_name)
 
             self.website.all_page_names.pop(previous_name)
+
+        name = format_page_name(name)
 
         self._name = name
 

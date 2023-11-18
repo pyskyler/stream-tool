@@ -1,7 +1,8 @@
 
 from ._core import create_website
 from .exceptions import *
-from . import Websockets_Auth
+from .Websockets_Auth import *
+from .builtin_obs_actions import *
 
 __all__ = ["create_website",
            "ButtonNameSyntaxError",
@@ -9,4 +10,5 @@ __all__ = ["create_website",
            "DuplicateWebsiteError",
            "DuplicateButtonNameError",
            "DuplicatePageNameError",
-           "Websockets_Auth"]
+           "Websockets_Auth",
+           "builtin_obs_actions"]

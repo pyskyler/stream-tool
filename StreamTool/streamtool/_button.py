@@ -19,9 +19,9 @@ class Button:
         button_function: callable, optional
             Action for button to run on press
         text: str, optional
-            text for the button, defaults to the name parameter
+            Text for the button, defaults to the name parameter
         button_link: str, optional
-            a url to a relative page on the site or any page on the web
+            A url to a relative page on the site or any page on the web
 
 
         Attributes

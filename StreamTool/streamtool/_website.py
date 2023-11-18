@@ -55,7 +55,7 @@ class Website:
 
         Examples
         --------
-        >>> from StreamTool import create_website
+        >>> import streamtool
         >>> my_site = create_website()
         >>> my_page = my_site.add_page('My Page Name')
 
@@ -76,7 +76,7 @@ class Website:
 
         Examples
         --------
-        >>> from main import create_website
+        >>> import streamtool
         >>> my_site = create_website()
         >>> my_site.build_and_run()
 

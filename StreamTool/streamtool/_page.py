@@ -35,6 +35,7 @@ class Page:
     def name(self):
         return self._name
 
+    # TODO: deal with names that can't work ie. spaces maybe other things
     @name.setter
     def name(self, name):
         if self.name is not None:
@@ -80,7 +81,7 @@ class Page:
 
         Examples
         --------
-        >>> from main import create_website
+        >>> import streamtool
         >>> my_site = create_website()
         >>> my_page = my_site.add_page()
         >>> my_button = my_page.add_button("button name")
@@ -89,4 +90,3 @@ class Page:
         added_button: Button = Button(self, name, **kwargs)
         self.all_buttons.append(added_button)
         return added_button
-

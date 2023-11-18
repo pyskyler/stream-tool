@@ -12,39 +12,114 @@ ws = _data.obs_websocket_manager
 
 
 def disconnect():
+    """Disconnect the web socket connection
+
+    """
     ws.disconnect()
 
 
-# Set the current scene
 def set_scene(new_scene):
+    """Set the current scene (or program scene if using studio mode)
+
+    Parameters
+    ----------
+    new_scene: str
+        The name of the scene to set to
+
+    """
     ws.call(requests.SetCurrentProgramScene(sceneName=new_scene))
 
 
-# Set the visibility of any source's filters
 def set_filter_visibility(source_name, filter_name, filter_enabled=True):
+    """Set a source filter visibility
+
+    Parameters
+    ----------
+    source_name: str
+        The name of the source to affect
+    filter_name: str
+        The name of the filter to affect
+    filter_enabled: bool, optional True
+        Set the filter enable (visible) status, default is True (enabled or visible)
+
+    """
     ws.call(requests.SetSourceFilterEnabled(
         sourceName=source_name, filterName=filter_name, filterEnabled=filter_enabled))
 
 
-# Set the visibility of any source
 def set_source_visibility(scene_name, source_name, source_visible=True):
+    """Set a source visibility
+
+    Parameters
+    ----------
+    scene_name: str
+        The name of the scene containing the source to affect
+    source_name: str
+        The name of the source to affect
+    source_visible: bool, optional True
+        Set to source enable (visible) status, default is True (enabled or visible)
+
+    """
     response = ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
     my_item_id = response.datain['sceneItemId']
     ws.call(requests.SetSceneItemEnabled(sceneName=scene_name, sceneItemId=my_item_id, sceneItemEnabled=source_visible))
 
 
-# Returns the current text of a text source
 def get_text(source_name):
+    """ Get the current text of a text source
+
+    Parameters
+    ----------
+    source_name
+        the text source to get the current text of
+
+    Returns
+    -------
+    text: str
+        the current text of the source
+
+    """
     response = ws.call(requests.GetInputSettings(inputName=source_name))
     return response.datain["inputSettings"]["text"]
 
 
 # Returns the text of a text source
 def set_text(source_name, new_text):
+    """ Set the text of a text source
+
+    Parameters
+    ----------
+    source_name: str
+        The name of text source to change
+    new_text: srt
+        The text to set the source to
+
+    """
     ws.call(requests.SetInputSettings(inputName=source_name, inputSettings={'text': new_text}))
 
 
 def get_source_transform(scene_name, source_name):
+    """ The current transform effects on a source
+
+    Used in combination with set_source_transform to change the transform values of a source.
+
+    Parameters
+    ----------
+    scene_name
+    source_name
+
+    Examples
+    --------
+    >>> import stream_tool
+    >>> source_current_transform = builtin_obs_actions.get_source_transform("my scene 1", "source I want to change")
+    >>> source_new_transform = source_current_transform
+    >>> # Move 100 pixels to the right
+    >>> source_new_transform["positionX"] += 100
+    >>> # set bottom crop to 50
+    >>> source_new_transform["cropBottom"] = 50
+    >>> builtin_obs_actions.set_source_transform("my scene 1", "source I want to change", source_new_transform)
+
+    """
     response = ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
     my_item_id = response.datain['sceneItemId']
     response = ws.call(requests.GetSceneItemTransform(sceneName=scene_name, sceneItemId=my_item_id))
@@ -60,63 +135,175 @@ def get_source_transform(scene_name, source_name):
     return transform
 
 
-# The transform should be a dictionary containing any of the following keys with corresponding values
-# positionX, positionY, scaleX, scaleY, cropTop, cropBottom, cropLeft, cropRight, rotation
-# e.g. {"scaleX" = 2, "scaleY" = 2.5}
-# Note: there are other transform settings, like height, width, sourceHeight, sourceWidth, alignment, etc., but these
-# feel like the main useful ones.
-# Use get_source_transform to see the full list
 def set_source_transform(scene_name, source_name, new_transform):
+    """ Set the transform values for a source
+
+    The transform should be a dictionary containing any of the following keys with corresponding values
+    positionX, positionY, scaleX, scaleY, cropTop, cropBottom, cropLeft, cropRight, rotation. The
+    current status can be retrieved with get_source_transform.
+
+    Parameters
+    ----------
+    scene_name: str
+        the name of the scene containing the source to affect
+    source_name: str
+        the name of the source to affect
+    new_transform: dict
+        dictionary containing keys of property to change and the value to set it to. Can get the current values
+        with get_source_transform or just set the desired keys
+
+    Examples
+    --------
+    >>> import stream_tool
+    >>> transform = {"scaleX": 2,
+    ...              "scaleY": 3}
+    >>> set_source_transform("my scene 1", "source I want to change", transform)
+
+    This is an alternate example using get_source_transform to update relative to current values
+
+    >>> import stream_tool
+    >>> source_current_transform = builtin_obs_actions.get_source_transform("my scene 1", "source I want to change")
+    >>> source_new_transform = source_current_transform
+    >>> # Move 100 pixels to the right
+    >>> source_new_transform["positionX"] += 100
+    >>> builtin_obs_actions.set_source_transform("my scene 1", "source I want to change", source_new_transform)
+
+
+    """
     response = ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
     my_item_id = response.datain['sceneItemId']
     ws.call(requests.SetSceneItemTransform(
         sceneName=scene_name, sceneItemId=my_item_id, sceneItemTransform=new_transform))
 
 
-# Note: an input, like a text box, is a type of source. This will get *input-specific settings*, not the broader
-# source settings like transform and scale
-# For a text source, this will return settings like its font, color, etc
 def get_input_settings(input_name):
+    """ Get the settings for an input
+
+    To be used with set_input_settings which requires the object this returns
+
+    Parameters
+    ----------
+    input_name: str
+        name of the input to get settings for
+
+    Returns
+    -------
+    object
+        all the settings of the input
+
+    Notes
+    -----
+    an input, like a text box, is a type of source. This will get *input-specific settings*, not the broader
+    source settings like transform and scale
+    For a text source, this will return settings like its font, color, etc
+
+    """
     return ws.call(requests.GetInputSettings(inputName=input_name))
 
 
-# set the input settings, input settings takes an object that can be retrieved from the above function
 def set_input_settings(input_name, input_settings):
+    """ Set the settings of an input with a version of the object retrieved from get_input_settings
+
+    Parameters
+    ----------
+    input_name: str
+        the name of the input to set settings
+    input_settings: object
+        returned from get_input_settings and can then be edited
+
+    """
     ws.call(requests.SetInputSettings(inputName=input_name, inputSettings=input_settings))
 
 
-# Get list of all the input types
-def get_input_kind_list():
-    return ws.call(requests.GetInputKindList())
-
-
-# Get list of all items in a certain scene
+# TODO: check what this actually does
 def get_scene_items(scene_name):
+    """ Get all names of items in a scene
+
+    Parameters
+    ----------
+    scene_name: str
+        name of the scene to get items from
+
+    Returns
+    -------
+    list
+        names of items in the scene
+
+    """
     return ws.call(requests.GetSceneItemList(sceneName=scene_name))
 
 
 def transition_to_scene(scene_name, transition_name):
+    """Transition to a scene in studio mode
+
+    This puts a scene in preview and then runs a transition to go to that scene.
+
+    Parameters
+    ----------
+    scene_name: str
+        The name of the scene to transition to
+    transition_name: str
+        The name of the transition to use
+
+    """
     ws.call(requests.SetCurrentPreviewScene(sceneName=scene_name))
     ws.call(requests.SetCurrentSceneTransition(transitionName=transition_name))
     ws.call(requests.TriggerStudioModeTransition())
 
 
 def get_current_program_scene():
+    """ Get the current live scene (or program scene if in studio mode)
+
+    Returns
+    -------
+    current_scene: str
+        The name of the current scene (or current program scene if in studio mode)
+
+    """
     response = ws.call(requests.GetCurrentProgramScene())
     current_scene = response.datain['currentProgramSceneName']
     return current_scene
 
 
 def pause_audio(input_name):
+    """ Pause audio playback on an audio input
+
+        Parameters
+        ----------
+        input_name: str
+            The audio input to affect
+
+        """
     ws.call(requests.TriggerMediaInputAction(inputName=input_name, mediaAction=_PAUSE_INPUT))
 
 
 def stop_audio(input_name):
+    """ Stop audio playback on an audio input
+
+    Parameters
+    ----------
+    input_name: str
+        The audio input to affect
+
+    """
     ws.call(requests.TriggerMediaInputAction(inputName=input_name, mediaAction=_STOP_INPUT))
 
 
 # File to play is optional
 def play_audio(input_name, file_path=None):
+    """Play audio from a file, if no file is provided it will just play the input
+
+    Parameters
+    ----------
+    input_name: str
+        The audio input to affect
+    file_path: str, optional
+        The file path of the audio file to play on the system with OBS
+
+    Returns
+    -------
+
+    """
     if file_path is not None:
         response = get_input_settings(input_name)
 
@@ -128,6 +315,14 @@ def play_audio(input_name, file_path=None):
 
 
 def play_pause_audio(input_name):
+    """Toggle play/pause on an audio input
+
+    Parameters
+    ----------
+    input_name: str
+        name of the input to affect
+
+    """
     response = ws.call(requests.GetMediaInputStatus(inputName=input_name))
     media_state = response.datain['mediaState']
     if media_state == _PLAYING:
@@ -136,19 +331,32 @@ def play_pause_audio(input_name):
         play_audio(input_name)
 
 
-def volume_up(input_name, amount=6):
+def change_volume(input_name, amount=6):
+    """ Change volume by a dB amount, default is 6 dB,
+
+    Use negative dB amount to turn down and a positive dB to turn up
+
+    Parameters
+    ----------
+    input_name: str
+        the name of the input to affect
+    amount: int, optional 6
+        number of dB to change by, default is 6 dB
+
+    """
     response = ws.call(requests.GetInputVolume(inputName=input_name))
     volume_db = response.datain['inputVolumeDb']
     volume_db += amount
     ws.call(requests.SetInputVolume(inputName=input_name, inputVolumeDb=volume_db))
 
 
-def volume_down(input_name, amount=6):
-    response = ws.call(requests.GetInputVolume(inputName=input_name))
-    volume_db = response.datain['inputVolumeDb']
-    volume_db -= amount
-    ws.call(requests.SetInputVolume(inputName=input_name, inputVolumeDb=volume_db))
-
-
 def toggle_input_mute(input_name):
+    """ Toggle the mute status of an input
+
+    Parameters
+    ----------
+    input_name: str
+        the input to affect
+
+    """
     ws.call(requests.ToggleInputMute(inputName=input_name))

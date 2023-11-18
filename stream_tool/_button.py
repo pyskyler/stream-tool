@@ -26,8 +26,14 @@ class Button:
 
         Attributes
         ----------
+        name: str
+            The name of the button
+        button_function: callable
+            Action for button to run on press
         text: str
-            The text label that appears on the button
+            Text for the button, defaults to the name parameter
+        button_link: str
+            A url to a relative page on the site or any page on the web
 
         """
 
@@ -105,13 +111,6 @@ class Button:
 
     @property
     def button_html(self):
-        """ Return the html text for adding this button.
-
-        Returns
-        -------
-        str
-
-        """
         return f"\n\t<div class='button-container'>" \
                f"<button onclick='performAction{self.name}()'>{self.text}</button></div>"
 

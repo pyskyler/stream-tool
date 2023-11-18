@@ -17,7 +17,7 @@ def create_website(use_obs_websockets=False) -> Website:
 
     Examples
     --------
-    >>> from StreamTool import create_website
+    >>> from stream_tool import create_website
     >>> my_site = create_website()
 
     """

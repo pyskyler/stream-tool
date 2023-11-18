@@ -22,8 +22,11 @@ class Website:
     index_page
         The _page.Page object for the index page automatically created by the site
     ws
-        The OBS websockets manager created by the site if use_obs_websockets is true. Would be used to create custom
-        OBS controls not provided in builtin_obs_actions and attach to a button function.
+        An instance of obsws from package obs-websocket-py. Would be used to create custom OBS
+        controls not provided in builtin_obs_actions and attach to a button function. Use its method
+        call to perform custom actions. The OBS websockets manager created by the site if
+        use_obs_websockets is True.
+
     """
     one_website_made: bool = False
 
@@ -57,7 +60,7 @@ class Website:
         --------
         >>> import streamtool
         >>> my_site = create_website()
-        >>> my_page = my_site.add_page('My Page Name')
+        >>> my_page = my_site.add_page('My-Page-Name')
 
         """
         created_page: Page = Page(self, name)

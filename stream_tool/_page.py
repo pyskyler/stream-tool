@@ -36,7 +36,6 @@ class Page:
     def name(self):
         return self._name
 
-    # TODO: deal with names that can't work ie. spaces maybe other things
     @name.setter
     def name(self, name):
         if self.name is not None:

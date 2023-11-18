@@ -11,3 +11,8 @@ def format_url(url: str):
         return url
     else:
         return f"http://{url}"
+
+
+def format_page_name(page_name: str):
+    page_name = page_name.replace(" ", "-")
+    return page_name

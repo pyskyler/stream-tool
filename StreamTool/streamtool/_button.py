@@ -31,11 +31,10 @@ class Button:
 
         """
 
-    def __init__(self, page: "Page", name: str, button_function: callable = None, text: str = None,
+    def __init__(self, page: Page, name: str, button_function: callable = None, text: str = None,
                  button_link: str = None):
-        # TODO: make it so that people can specify parameters out of order by name
         self._button_function = None
-        self.page: "Page" = page
+        self.page: Page = page
         self._name = None
         self.name: str = name
         if text is None:
@@ -49,6 +48,8 @@ class Button:
     def button_function(self):
         return self._button_function
 
+    # TODO: could this just be some kind of dict comprehension? or a property on page
+    #  that finds all the functional buttons?
     @button_function.setter
     def button_function(self, function):
         self._button_function = function
@@ -77,6 +78,8 @@ class Button:
 
         restricted_use_names.append(name)
 
+        # TODO: Does this removing and adding every time a name changes need to exist or can
+        #  the list just be created later with a list comprehension (or a dict comprehension)?
         self.page.all_button_names.append(self.name)
 
         if previous_name is not None:
@@ -132,18 +135,12 @@ class Button:
         return button_link_script
 
     def build(self):
-        """ Add html and css for the buttons to files for website generation.
-
-        """
-        with open(self.page.html_part2_path, "a") as f:
-            f.write(self.button_html)
+        self.page.html_part_2 += self.button_html
 
         button_has_function = self.button_function is not None
         if button_has_function:
-            with open(self.page.html_part4_path, "a") as f:
-                f.write(self.button_function_script)
+            self.page.html_part_4 += self.button_function_script
 
         button_has_link = self.button_link is not None
         if button_has_link:
-            with open(self.page.html_part4_path, "a") as f:
-                f.write(self.button_link_script)
+            self.page.html_part_4 += self.button_link_script

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-
 from flask import Flask, render_template
 
 from typing import TYPE_CHECKING
@@ -30,18 +28,13 @@ class Website:
     one_website_made: bool = False
 
     def __init__(self, use_obs_websockets=False):
-        reset_server_files()
-
-        self._app = Flask(__name__)
+        self._app = Flask(__name__, template_folder="resources/templates",
+                          static_folder="resources/static", static_url_path="/static")
         self.all_pages: list[Page] = []
-        self.all_page_names: list = []
+        self.all_page_names: dict[str, Page] = {}
         self.index_page = self.add_page('index')
         self.buttons_with_functions: dict[str, Button] = {}
         Website.one_website_made = True
-
-        # setup use of images for 404 page
-        self._app.static_folder = 'static'
-        self._app.static_url_path = '/static'
 
         if use_obs_websockets:
             self.ws = create_obs_websocket_manager()
@@ -103,33 +96,24 @@ class Website:
         for page in self.all_pages:
             for button in page.all_buttons:
                 button.build()
-            page.build()
-            page.delete_build_files()
 
         @self._app.route('/')
         def show_index():
-            return render_template('index.html')
+            return render_template("page_template.html",
+                                   part_2=self.all_page_names["index"].html_part_2,
+                                   part_4=self.all_page_names["index"].html_part_4)
 
         @self._app.route('/<page_name>')
         def show_page(page_name):
             if page_name in self.all_page_names:
-                return render_template(f"{page_name}.html")
+                return render_template("page_template.html",
+                                       part_2=self.all_page_names[page_name].html_part_2,
+                                       part_4=self.all_page_names[page_name].html_part_4)
             elif page_name in self.buttons_with_functions:
                 this_button = self.buttons_with_functions[page_name]
                 this_button.button_function()
                 return this_button.name
             else:
-                return render_template("404.html")
+                return render_template("404.html"), 404
 
         self._app.run(host=host, port=port, debug=debug)
-
-
-def reset_server_files():
-    for file in os.listdir("templates"):
-        if file != "404.html":
-            os.remove(f"templates/{file}")
-    for directory in os.listdir("html_creation_files"):
-        if directory != "standard_files" and os.path.isdir(f"html_creation_files/{directory}"):
-            for file in os.listdir(f"html_creation_files/{directory}"):
-                os.remove(f"html_creation_files/{directory}/{file}")
-            os.rmdir(f"html_creation_files/{directory}")

@@ -1,3 +1,9 @@
+""" Actions to perform on OBS websockets
+
+Has a set of functions that can be run to tell OBS to do something. These can be attached to buttons
+to make them happen on a button click.
+
+"""
 from . import _data
 from obswebsocket import requests
 
@@ -8,14 +14,14 @@ _PAUSE_INPUT = "OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PAUSE"
 _PLAYING = "OBS_MEDIA_STATE_PLAYING"
 _PAUSED = "OBS_MEDIA_STATE_PAUSED"
 
-ws = _data.obs_websocket_manager
+_ws = _data.obs_websocket_manager
 
 
 def disconnect():
     """Disconnect the web socket connection
 
     """
-    ws.disconnect()
+    _ws.disconnect()
 
 
 def set_scene(new_scene):
@@ -27,7 +33,7 @@ def set_scene(new_scene):
         The name of the scene to set to
 
     """
-    ws.call(requests.SetCurrentProgramScene(sceneName=new_scene))
+    _ws.call(requests.SetCurrentProgramScene(sceneName=new_scene))
 
 
 def set_filter_visibility(source_name, filter_name, filter_enabled=True):
@@ -43,7 +49,7 @@ def set_filter_visibility(source_name, filter_name, filter_enabled=True):
         Set the filter enable (visible) status, default is True (enabled or visible)
 
     """
-    ws.call(requests.SetSourceFilterEnabled(
+    _ws.call(requests.SetSourceFilterEnabled(
         sourceName=source_name, filterName=filter_name, filterEnabled=filter_enabled))
 
 
@@ -60,9 +66,9 @@ def set_source_visibility(scene_name, source_name, source_visible=True):
         Set to source enable (visible) status, default is True (enabled or visible)
 
     """
-    response = ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
+    response = _ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
     my_item_id = response.datain['sceneItemId']
-    ws.call(requests.SetSceneItemEnabled(sceneName=scene_name, sceneItemId=my_item_id, sceneItemEnabled=source_visible))
+    _ws.call(requests.SetSceneItemEnabled(sceneName=scene_name, sceneItemId=my_item_id, sceneItemEnabled=source_visible))
 
 
 def get_text(source_name):
@@ -79,7 +85,7 @@ def get_text(source_name):
         the current text of the source
 
     """
-    response = ws.call(requests.GetInputSettings(inputName=source_name))
+    response = _ws.call(requests.GetInputSettings(inputName=source_name))
     return response.datain["inputSettings"]["text"]
 
 
@@ -95,7 +101,7 @@ def set_text(source_name, new_text):
         The text to set the source to
 
     """
-    ws.call(requests.SetInputSettings(inputName=source_name, inputSettings={'text': new_text}))
+    _ws.call(requests.SetInputSettings(inputName=source_name, inputSettings={'text': new_text}))
 
 
 def get_source_transform(scene_name, source_name):
@@ -120,9 +126,9 @@ def get_source_transform(scene_name, source_name):
     >>> builtin_obs_actions.set_source_transform("my scene 1", "source I want to change", source_new_transform)
 
     """
-    response = ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
+    response = _ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
     my_item_id = response.datain['sceneItemId']
-    response = ws.call(requests.GetSceneItemTransform(sceneName=scene_name, sceneItemId=my_item_id))
+    response = _ws.call(requests.GetSceneItemTransform(sceneName=scene_name, sceneItemId=my_item_id))
     transform = {"positionX": response.datain["sceneItemTransform"]["positionX"],
                  "positionY": response.datain["sceneItemTransform"]["positionY"],
                  "scaleX": response.datain["sceneItemTransform"]["scaleX"],
@@ -170,9 +176,9 @@ def set_source_transform(scene_name, source_name, new_transform):
 
 
     """
-    response = ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
+    response = _ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))
     my_item_id = response.datain['sceneItemId']
-    ws.call(requests.SetSceneItemTransform(
+    _ws.call(requests.SetSceneItemTransform(
         sceneName=scene_name, sceneItemId=my_item_id, sceneItemTransform=new_transform))
 
 
@@ -198,7 +204,7 @@ def get_input_settings(input_name):
     For a text source, this will return settings like its font, color, etc
 
     """
-    return ws.call(requests.GetInputSettings(inputName=input_name))
+    return _ws.call(requests.GetInputSettings(inputName=input_name))
 
 
 def set_input_settings(input_name, input_settings):
@@ -212,7 +218,7 @@ def set_input_settings(input_name, input_settings):
         returned from get_input_settings and can then be edited
 
     """
-    ws.call(requests.SetInputSettings(inputName=input_name, inputSettings=input_settings))
+    _ws.call(requests.SetInputSettings(inputName=input_name, inputSettings=input_settings))
 
 
 # TODO: check what this actually does
@@ -230,7 +236,7 @@ def get_scene_items(scene_name):
         names of items in the scene
 
     """
-    return ws.call(requests.GetSceneItemList(sceneName=scene_name))
+    return _ws.call(requests.GetSceneItemList(sceneName=scene_name))
 
 
 def transition_to_scene(scene_name, transition_name):
@@ -246,9 +252,9 @@ def transition_to_scene(scene_name, transition_name):
         The name of the transition to use
 
     """
-    ws.call(requests.SetCurrentPreviewScene(sceneName=scene_name))
-    ws.call(requests.SetCurrentSceneTransition(transitionName=transition_name))
-    ws.call(requests.TriggerStudioModeTransition())
+    _ws.call(requests.SetCurrentPreviewScene(sceneName=scene_name))
+    _ws.call(requests.SetCurrentSceneTransition(transitionName=transition_name))
+    _ws.call(requests.TriggerStudioModeTransition())
 
 
 def get_current_program_scene():
@@ -260,7 +266,7 @@ def get_current_program_scene():
         The name of the current scene (or current program scene if in studio mode)
 
     """
-    response = ws.call(requests.GetCurrentProgramScene())
+    response = _ws.call(requests.GetCurrentProgramScene())
     current_scene = response.datain['currentProgramSceneName']
     return current_scene
 
@@ -274,7 +280,7 @@ def pause_audio(input_name):
             The audio input to affect
 
         """
-    ws.call(requests.TriggerMediaInputAction(inputName=input_name, mediaAction=_PAUSE_INPUT))
+    _ws.call(requests.TriggerMediaInputAction(inputName=input_name, mediaAction=_PAUSE_INPUT))
 
 
 def stop_audio(input_name):
@@ -286,7 +292,7 @@ def stop_audio(input_name):
         The audio input to affect
 
     """
-    ws.call(requests.TriggerMediaInputAction(inputName=input_name, mediaAction=_STOP_INPUT))
+    _ws.call(requests.TriggerMediaInputAction(inputName=input_name, mediaAction=_STOP_INPUT))
 
 
 # File to play is optional
@@ -311,7 +317,7 @@ def play_audio(input_name, file_path=None):
         input_settings['local_file'] = file_path
         set_input_settings(input_name, input_settings)
 
-    ws.call(requests.TriggerMediaInputAction(inputName=input_name, mediaAction=_PLAY_INPUT))
+    _ws.call(requests.TriggerMediaInputAction(inputName=input_name, mediaAction=_PLAY_INPUT))
 
 
 def play_pause_audio(input_name):
@@ -323,7 +329,7 @@ def play_pause_audio(input_name):
         name of the input to affect
 
     """
-    response = ws.call(requests.GetMediaInputStatus(inputName=input_name))
+    response = _ws.call(requests.GetMediaInputStatus(inputName=input_name))
     media_state = response.datain['mediaState']
     if media_state == _PLAYING:
         pause_audio(input_name)
@@ -344,10 +350,10 @@ def change_volume(input_name, amount=6):
         number of dB to change by, default is 6 dB
 
     """
-    response = ws.call(requests.GetInputVolume(inputName=input_name))
+    response = _ws.call(requests.GetInputVolume(inputName=input_name))
     volume_db = response.datain['inputVolumeDb']
     volume_db += amount
-    ws.call(requests.SetInputVolume(inputName=input_name, inputVolumeDb=volume_db))
+    _ws.call(requests.SetInputVolume(inputName=input_name, inputVolumeDb=volume_db))
 
 
 def toggle_input_mute(input_name):
@@ -359,4 +365,4 @@ def toggle_input_mute(input_name):
         the input to affect
 
     """
-    ws.call(requests.ToggleInputMute(inputName=input_name))
+    _ws.call(requests.ToggleInputMute(inputName=input_name))

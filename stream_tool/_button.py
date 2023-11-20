@@ -12,18 +12,6 @@ if TYPE_CHECKING:
 class Button:
     """ A button and all its information
 
-        Parameters
-        ----------
-        name: str
-            The name of the button
-        button_function: callable, optional
-            Action for button to run on press
-        text: str, optional
-            Text for the button, defaults to the name parameter
-        button_link: str, optional
-            A url to a relative page on the site or any page on the web
-
-
         Attributes
         ----------
         name: str

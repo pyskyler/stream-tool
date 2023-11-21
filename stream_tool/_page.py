@@ -75,12 +75,12 @@ class Page:
         name: str
             The name of the button
         **kwargs: dict, optional
-            Extra arguments for creating button, refer to Button class for keyword arguments
+            Extra arguments for creating button, refer to Button class docmentation for keyword arguments
 
         Returns
         -------
         object: Button
-            instance of class _button.Button
+            instance of Button class
 
         Examples
         --------

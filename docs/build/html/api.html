@@ -78,6 +78,56 @@ call to perform custom actions. The OBS websockets manager created by the site i
 use_obs_websockets is True.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="stream_tool._website.Website.add_page">
+<span class="sig-name descname"><span class="pre">add_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stream_tool._page.Page" title="stream_tool._page.Page"><span class="pre">Page</span></a></span></span><a class="headerlink" href="#stream_tool._website.Website.add_page" title="Link to this definition">¶</a></dt>
+<dd><p>Add a page on the website</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of page displayed in tab</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> – instance of class _page.Page</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#stream_tool._page.Page" title="stream_tool._page.Page">Page</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">streamtool</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_page</span> <span class="o">=</span> <span class="n">my_site</span><span class="o">.</span><span class="n">add_page</span><span class="p">(</span><span class="s1">&#39;My-Page-Name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stream_tool._website.Website.build_and_run">
+<span class="sig-name descname"><span class="pre">build_and_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'127.0.0.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stream_tool._website.Website.build_and_run" title="Link to this definition">¶</a></dt>
+<dd><p>Build website files and routes and run it</p>
+<p>This function of the Website class builds the whole website including
+each page and all its buttons. It creates every html file. It also
+gives Flask a function to send that html to each user. It also runs
+the website on the web server.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">streamtool</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<em>str {'127.0.0.1'</em><em>, </em><em>'0.0.0.0'}</em>) – The host to run the web server on. Defaults to ‘127.0.0.1’ which runs the
+server locally. Set this to ‘0.0.0.0’ to have the server available
+externally as well.</p></li>
+<li><p><strong>port</strong> (<em>int</em><em>, </em><em>default 5000</em>) – The port to run the web server on.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>default False</em>) – Run flask in debug. Default is off.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -87,7 +137,7 @@ use_obs_websockets is True.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stream_tool._page.Page.name">
 <span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#stream_tool._page.Page.name" title="Link to this definition">¶</a></dt>
-<dd><p>name of page displayed in tab</p>
+<dd><p>The url for the page. Spaces will be replaced with dashes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -98,12 +148,39 @@ use_obs_websockets is True.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stream_tool._page.Page.url">
 <span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#stream_tool._page.Page.url" title="Link to this definition">¶</a></dt>
-<dd><p>this is a property that can get the relative url for this page on the website</p>
+<dd><p>This is a property that can get the relative url for this page on the website</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stream_tool._page.Page.add_button">
+<span class="sig-name descname"><span class="pre">add_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stream_tool._button.Button" title="stream_tool._button.Button"><span class="pre">Button</span></a></span></span><a class="headerlink" href="#stream_tool._page.Page.add_button" title="Link to this definition">¶</a></dt>
+<dd><p>Add a button to a page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the button</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Extra arguments for creating button, refer to Button class docmentation for keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>object</strong> – instance of Button class</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#stream_tool._button.Button" title="stream_tool._button.Button">Button</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">streamtool</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_page</span> <span class="o">=</span> <span class="n">my_site</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_button</span> <span class="o">=</span> <span class="n">my_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;button name&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>

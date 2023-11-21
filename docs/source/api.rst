@@ -11,7 +11,13 @@ Website Structure Classes
 
 .. autoclass:: stream_tool._website.Website
 
+    .. automethod:: add_page
+
+    .. automethod:: build_and_run
+
 .. autoclass:: stream_tool._page.Page
+
+    .. automethod:: add_button
 
 .. autoclass:: stream_tool._button.Button
 

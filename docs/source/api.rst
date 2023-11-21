@@ -22,6 +22,8 @@ Websockets Connection & Authentication
 .. automodule:: stream_tool.Websockets_Auth
     :members:
 
+.. _obs_functions_section:
+
 OBS Functions
 -------------
 

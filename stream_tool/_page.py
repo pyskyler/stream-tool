@@ -17,9 +17,9 @@ class Page:
     Attributes
     ----------
     name: str
-        name of page displayed in tab
+        The url for the page. Spaces will be replaced with dashes.
     url: str
-        this is a property that can get the relative url for this page on the website
+        This is a property that can get the relative url for this page on the website
 
     """
     def __init__(self, website: Website, name):

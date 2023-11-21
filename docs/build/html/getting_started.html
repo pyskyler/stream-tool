@@ -35,16 +35,22 @@
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
-<p>Welcome to <strong>Stream Tool</strong>, a Python package that simplifies the
-process of creating a customizable website for creating macros.
-With Stream Tool, you can easily build a website, create pages, and
-add buttons with various functionalities, including integration with
+<p>Welcome to <strong>Stream Tool</strong>, a Python package for creating a customizable website
+for with custom macros. With Stream Tool, you can easily build a website, create
+pages, and add buttons with various functionalities, including integration with
 OBS using websockets.</p>
 <p>Before getting started make sure you have Stream Tool <a class="reference internal" href="installing.html"><span class="doc">installed</span></a>.</p>
+<p>Although all the commands are written for the console in this tutorial,
+I recommend following along in a script. You can put <code class="docutils literal notranslate"><span class="pre">build_and_run</span></code> at
+the end of your script and run at any point to see your progress. You
+can also use <code class="docutils literal notranslate"><span class="pre">print()</span></code> commands to see what the attributes return. This
+is because of an issue with running <code class="docutils literal notranslate"><span class="pre">build_and_run</span></code> in the console
+multiple times which is explained in the footnote to the <a class="reference internal" href="#running"><span class="std std-ref">Running
+the Website</span></a> section.</p>
 </section>
 <section id="importing">
 <h2>Importing<a class="headerlink" href="#importing" title="Link to this heading">¶</a></h2>
-<p>Make sure Stream Tool is imported into the script. You can import the whole library
+<p>Make sure Stream Tool is imported. You can import the whole library
 or just specific modules and functions.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stream_tool</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
@@ -63,6 +69,55 @@ or just specific modules and functions.</p>
 </div>
 <p>This returns an instance of the class <code class="docutils literal notranslate"><span class="pre">Website</span></code> and assigns it to the variable my_site.</p>
 <p>That instance will have an empty website with a blank index page.</p>
+</section>
+<section id="running-the-website">
+<span id="running"></span><h2>Running the Website<a class="headerlink" href="#running-the-website" title="Link to this heading">¶</a></h2>
+<p>When you want to see the current state of the site or are ready to use it you
+should run the method <code class="docutils literal notranslate"><span class="pre">build_and_run</span></code> from your Website.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">()</span>
+<span class="go"> * Serving Flask app &#39;stream_tool._website&#39;</span>
+<span class="go"> * Debug mode: off</span>
+<span class="go">WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.</span>
+<span class="go"> * Running on http://127.0.0.1:5000</span>
+<span class="go">Press CTRL+C to quit</span>
+</pre></div>
+</div>
+<p>Running this starts the server on your local machine on port 5000. This site
+can be accessed on that machine at <a class="reference external" href="http://127.0.0.1:5000">http://127.0.0.1:5000</a>.</p>
+<p>The console will tell you this as well. It will also provide a warning about this
+being a development server. That is just fine for this use which is intended to only
+be used within your local network.</p>
+<p>You can press CTRL + C to stop the server.</p>
+<p>You may get an error when running this saying that the port is already in use. In that
+case you’ll have to use the following code to specify a different port than
+the default <code class="docutils literal notranslate"><span class="pre">5000</span></code>.</p>
+<p>The server can also be made available to other machines on the local network
+and on a different port using arguments or keyword arguments. Host is the first
+argument and <code class="docutils literal notranslate"><span class="pre">'0.0.0.0'</span></code> is the host to set to to have this available on the
+local network. The port is the second argument and can be any valid integer port.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using arguments</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">(</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="mi">6050</span><span class="p">)</span>
+ <span class="o">*</span> <span class="n">Serving</span> <span class="n">Flask</span> <span class="n">app</span> <span class="s1">&#39;stream_tool._website&#39;</span>
+ <span class="o">*</span> <span class="n">Debug</span> <span class="n">mode</span><span class="p">:</span> <span class="n">off</span>
+<span class="n">WARNING</span><span class="p">:</span> <span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">development</span> <span class="n">server</span><span class="o">.</span> <span class="n">Do</span> <span class="ow">not</span> <span class="n">use</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">production</span> <span class="n">deployment</span><span class="o">.</span> <span class="n">Use</span> <span class="n">a</span> <span class="n">production</span> <span class="n">WSGI</span> <span class="n">server</span> <span class="n">instead</span><span class="o">.</span>
+ <span class="o">*</span> <span class="n">Running</span> <span class="n">on</span> <span class="nb">all</span> <span class="n">addresses</span> <span class="p">(</span><span class="mf">0.0.0.0</span><span class="p">)</span>
+ <span class="o">*</span> <span class="n">Running</span> <span class="n">on</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">6050</span>
+ <span class="o">*</span> <span class="n">Running</span> <span class="n">on</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168.86.124</span><span class="p">:</span><span class="mi">6050</span>
+<span class="n">Press</span> <span class="n">CTRL</span><span class="o">+</span><span class="n">C</span> <span class="n">to</span> <span class="n">quit</span>
+
+<span class="c1"># Using keyword arguments</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">6050</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">)</span>
+ <span class="o">*</span> <span class="n">Serving</span> <span class="n">Flask</span> <span class="n">app</span> <span class="s1">&#39;stream_tool._website&#39;</span>
+ <span class="o">*</span> <span class="n">Debug</span> <span class="n">mode</span><span class="p">:</span> <span class="n">off</span>
+<span class="n">WARNING</span><span class="p">:</span> <span class="n">This</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">development</span> <span class="n">server</span><span class="o">.</span> <span class="n">Do</span> <span class="ow">not</span> <span class="n">use</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">production</span> <span class="n">deployment</span><span class="o">.</span> <span class="n">Use</span> <span class="n">a</span> <span class="n">production</span> <span class="n">WSGI</span> <span class="n">server</span> <span class="n">instead</span><span class="o">.</span>
+ <span class="o">*</span> <span class="n">Running</span> <span class="n">on</span> <span class="nb">all</span> <span class="n">addresses</span> <span class="p">(</span><span class="mf">0.0.0.0</span><span class="p">)</span>
+ <span class="o">*</span> <span class="n">Running</span> <span class="n">on</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">6050</span>
+ <span class="o">*</span> <span class="n">Running</span> <span class="n">on</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168.86.124</span><span class="p">:</span><span class="mi">6050</span>
+<span class="n">Press</span> <span class="n">CTRL</span><span class="o">+</span><span class="n">C</span> <span class="n">to</span> <span class="n">quit</span>
+</pre></div>
+</div>
+<p>You can do this at any time during the tutorial to see what it currently looks
+like or at the end of a script <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> .</p>
 </section>
 <section id="using-the-index-page">
 <h2>Using The Index Page<a class="headerlink" href="#using-the-index-page" title="Link to this heading">¶</a></h2>
@@ -87,7 +142,7 @@ with the <code class="docutils literal notranslate"><span class="pre">Page.name<
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">volume_page</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Volume Page&quot;</span>
 </pre></div>
 </div>
-<p>The page name is what will be used as the url for the page. Since page names cannot have a space in them
+<p>The page <code class="docutils literal notranslate"><span class="pre">name</span></code> is what will be used as the url for the page. Since page names cannot have a space in them
 it will replace it with a dash when it’s set. We can check this by looking at the pages url or name.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">volume_page</span><span class="o">.</span><span class="n">url</span>
 <span class="go">&#39;/Volume-Page&#39;</span>
@@ -99,7 +154,7 @@ it will replace it with a dash when it’s set. We can check this by looking at 
 <section id="adding-buttons">
 <h2>Adding Buttons<a class="headerlink" href="#adding-buttons" title="Link to this heading">¶</a></h2>
 <p>Buttons can be added to pages to perform various actions. Now, let’s
-add a new page to our website. It has one required argument of a name
+add a new button to our page. It has one required argument of a name
 for the button. Adding a button returns an instance of the
 <code class="docutils literal notranslate"><span class="pre">Button</span></code> class:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_button</span> <span class="o">=</span> <span class="n">volume_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;My Button&quot;</span><span class="p">)</span>
@@ -110,9 +165,9 @@ for the button. Adding a button returns an instance of the
 <h2>Customizing Buttons<a class="headerlink" href="#customizing-buttons" title="Link to this heading">¶</a></h2>
 <p>We can change the attributes of our already created button to change its text
 or functionality.</p>
-<p>We can change the text the button says by assigning the text parameter.
-If no text is provided in the initializing of the button the text is set to the
-name.</p>
+<p>We can change the text the button says by assigning to the <code class="docutils literal notranslate"><span class="pre">text</span></code> parameter.
+If no text is provided in the initializing of the button the <code class="docutils literal notranslate"><span class="pre">text</span></code> is set to the
+<code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_button</span><span class="o">.</span><span class="n">text</span>
 <span class="go">&#39;My Button&#39;</span>
 </pre></div>
@@ -149,55 +204,128 @@ adding it to the index page.</p>
 <p>We can also have the button press execute a python function. Here’s one that
 would print text on the button press. We have to define a function and then
 set the attribute <code class="docutils literal notranslate"><span class="pre">button_function</span></code> to that function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add a button on &quot;My Page&quot; with a Python print function</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">print_hello</span><span class="p">():</span>
-<span class="o">...</span>     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello, world!&quot;</span><span class="p">)</span>
-<span class="o">...</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">my_print_button</span> <span class="o">=</span> <span class="n">my_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;Print Hello&quot;</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">my_print_button</span><span class="o">.</span><span class="n">button_function</span> <span class="o">=</span> <span class="n">print_hello</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">print_hello</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello, world!&quot;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_print_button</span> <span class="o">=</span> <span class="n">volume_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;Print Hello&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_print_button</span><span class="o">.</span><span class="n">button_function</span> <span class="o">=</span> <span class="n">print_hello</span>
 </pre></div>
 </div>
 </section>
 <section id="adding-buttons-with-functionality-or-links">
 <h2>Adding Buttons With Functionality or Links<a class="headerlink" href="#adding-buttons-with-functionality-or-links" title="Link to this heading">¶</a></h2>
-<p>All the attributes discussed above are also keyword arguments of the add_button
+<p>All the attributes discussed above are also keyword arguments of the <code class="docutils literal notranslate"><span class="pre">add_button</span></code>
 function: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">button_link</span></code>, <code class="docutils literal notranslate"><span class="pre">button_function</span></code>.</p>
 <p>Using the arguments we can add a button with specific text and a link to
-github.com</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;https://www.github.com&quot;</span>
+our other Volume page. Let’s put this on the index page so we have a way to
+get there:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">link</span> <span class="o">=</span> <span class="n">volume_page</span><span class="o">.</span><span class="n">url</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_index_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;btn1&quot;</span><span class="p">,</span>
-<span class="gp">... </span>                         <span class="n">text</span><span class="o">=</span><span class="s2">&quot;github&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                         <span class="n">text</span><span class="o">=</span><span class="s2">&quot;volume&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                         <span class="n">button_link</span><span class="o">=</span><span class="n">link</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We can also add another button to use our previous function. We’ll put this one
-on the index page.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_index_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;Go to index&quot;</span><span class="p">,</span>
+<p>We can also add another button to use our previous function, but this time
+on the index page (it’s important that every page can say ‘Hello, Word!’):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_index_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;Print Hello Again&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                         <span class="n">button_function</span><span class="o">=</span><span class="n">print_hello</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="adding-obs-websockets-integration">
 <h2>Adding OBS Websockets Integration<a class="headerlink" href="#adding-obs-websockets-integration" title="Link to this heading">¶</a></h2>
-<p>If you want to integrate with OBS using websockets, you can enable it when creating the website:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a website with OBS websockets integration</span>
-<span class="n">obs_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">(</span><span class="n">use_obs_websockets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p>If you want to integrate with OBS using websockets, you first need to setup
+the connection and authentication information. There are 3 variables in
+<code class="docutils literal notranslate"><span class="pre">Websockets_Auth</span></code> for this: <code class="docutils literal notranslate"><span class="pre">websocket_host</span></code>, <code class="docutils literal notranslate"><span class="pre">websocket_port</span></code>,
+<code class="docutils literal notranslate"><span class="pre">websocket_password</span></code>.</p>
+<p>These need to be configured with what you have setup in OBS.</p>
+<p>If you are running the webserver from the same machine as OBS than the
+host will be the <code class="docutils literal notranslate"><span class="pre">'localhost'</span></code> or <code class="docutils literal notranslate"><span class="pre">'127.0.0.1'</span></code>. If it is running on a different
+machine then the one running the web server that machines IP address will
+be used. This is a string.</p>
+<p>If it is running on the same machine the port will be the one that OBS says
+websockets is using. If it is not the same machine it will also be the same
+port unless there is port forwarding on that computer. (The firewall may
+need to be opened up if using a different machine for the web server
+and OBS)</p>
+<p>The port is an integer.</p>
+<p>The password is the one set in OBS. It is a string.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Websockets_Auth</span><span class="o">.</span><span class="n">websocket_host</span> <span class="o">=</span> <span class="s2">&quot;your_host&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Websockets_Auth</span><span class="o">.</span><span class="n">websocket_port</span> <span class="o">=</span> <span class="s2">&quot;your_port&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Websockets_Auth</span><span class="o">.</span><span class="n">websocket_password</span> <span class="o">=</span> <span class="s2">&quot;your_password&quot;</span>
 </pre></div>
 </div>
-<p>Buttons can then be linked to OBS actions. For example, let’s create a button to change the volume:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add a button on &quot;My Page&quot; to change the volume in OBS</span>
-<span class="n">my_obs_button</span> <span class="o">=</span> <span class="n">my_page</span><span class="o">.</span><span class="n">create_button</span><span class="p">(</span><span class="s2">&quot;Change Volume&quot;</span><span class="p">,</span>
-<span class="o">...</span>                                   <span class="n">button_function</span><span class="o">=</span><span class="n">builtin_obs_actions</span><span class="o">.</span><span class="n">change_volume</span><span class="p">,</span>
-<span class="o">...</span>                                   <span class="n">input_name</span><span class="o">=</span><span class="s2">&quot;your_input_name&quot;</span><span class="p">,</span>
-<span class="o">...</span>                                   <span class="n">amount</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<p>You will also need to enable the use of OBS websockets when creating your
+website. Make sure the authentication is setup before you create the website because
+this is when the connection will be made.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obs_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">(</span><span class="n">use_obs_websockets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Remember to replace <code class="docutils literal notranslate"><span class="pre">&quot;your_input_name&quot;</span></code> with the actual name of the input in your OBS configuration.</p>
+<p>Buttons can then be linked to OBS actions. For example, let’s create a button to increase the volume of
+an audio input by 6 dB:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_obs_button</span> <span class="o">=</span> <span class="n">volume_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;Change Volume&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">button_function</span><span class="o">=</span><span class="n">builtin_obs_actions</span><span class="o">.</span><span class="n">change_volume</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">button_function_args</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;your_input_name&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We pass the function we want to run into <code class="docutils literal notranslate"><span class="pre">button_function</span></code> and if there are any arguments for that
+function it goes in order as a list into <code class="docutils literal notranslate"><span class="pre">button_function_args</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">change_volume</span></code> takes 2 arguments, the audio input to change and the amount of dB to change
+it by.</p>
+<p>Remember to replace <code class="docutils literal notranslate"><span class="pre">'your_input_name'</span></code> with the actual name of the input in your OBS configuration.</p>
 <p>There are other functions in <code class="docutils literal notranslate"><span class="pre">builtin_obs_actions</span></code> that can be used in the same fashion. There’s
 a list in the API documentation <a class="reference internal" href="api.html#obs-functions-section"><span class="std std-ref">here</span></a>.</p>
+</section>
+<section id="what-have-we-got">
+<h2>What Have We Got?<a class="headerlink" href="#what-have-we-got" title="Link to this heading">¶</a></h2>
+<p>If you’ve followed along through the whole tutorial you have a lot of
+buttons now and 2 pages. Let’s run it and see what we’ve got!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">(</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">)</span>
+<span class="go"> * Serving Flask app &#39;stream_tool._website&#39;</span>
+<span class="go"> * Debug mode: off</span>
+<span class="go">WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.</span>
+<span class="go"> * Running on all addresses (0.0.0.0)</span>
+<span class="go"> * Running on http://127.0.0.1:5000</span>
+<span class="go"> * Running on http://xxx.xxx.xxx.xxx:5000</span>
+<span class="go">Press CTRL+C to quit</span>
+</pre></div>
+</div>
+<p>If we visit the site (either one) that shows up in the console, we can see our index
+page with wonderful links to Google and our Volume page as well as a button
+to say ‘Hello, world!’</p>
+<p>If we go to the volume page we have a button to go
+back to the index, one that does nothing, one to adjust the volume of a source
+in obs, and one to say ‘Hello, world!’</p>
+<p>You can even try checking it out on another device. Take out your phone
+and if its on the same network try going to the second address shown in
+the console. You should be able to control all the same things from your phone
+or any other device on the network!</p>
 <hr class="docutils" />
-<p>For more information on everything, refer to the official Stream Tool <a class="reference internal" href="api.html"><span class="doc">API</span></a> documentation.</p>
-<p>We can also do some more advanced OBS Websocket macros, <a class="reference internal" href="advanced_use.html"><span class="doc">let’s try that</span></a>!</p>
+<p>Congrats! You made it through the tutorial… or skimmed it…
+or skipped to the end.</p>
+<p>No matter how you got here, for more information on everything,
+refer to the official Stream Tool <a class="reference internal" href="api.html"><span class="doc">API</span></a> documentation.</p>
+<p>But we don’t have to stop the learning yet, we can also do some
+more advanced macros, <a class="reference internal" href="advanced_use.html"><span class="doc">let’s try that</span></a>!</p>
+<hr class="docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>It is known that running <code class="docutils literal notranslate"><span class="pre">build_and_run</span></code> more than once in the console
+causes an error. If you intend on running it more than once, you should work
+through this tutorial in a script and have the <code class="docutils literal notranslate"><span class="pre">build_and_run</span></code> command at the end:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">stream_tool</span> <span class="kn">import</span> <span class="n">create_website</span>
+
+<span class="n">my_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">()</span>
+<span class="n">my_page</span> <span class="o">=</span> <span class="n">my_site</span><span class="o">.</span><span class="n">add_page</span><span class="p">(</span><span class="s2">&quot;page&quot;</span><span class="p">)</span>
+<span class="n">my_button</span> <span class="o">=</span> <span class="n">my_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">)</span>
+
+<span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">()</span>
+</pre></div>
+</div>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -224,6 +352,7 @@ a list in the API documentation <a class="reference internal" href="api.html#obs
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#importing">Importing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-a-basic-website">Creating a Basic Website</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-website">Running the Website</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-the-index-page">Using The Index Page</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-pages">Adding Pages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#customizing-pages">Customizing Pages</a></li>
@@ -232,6 +361,7 @@ a list in the API documentation <a class="reference internal" href="api.html#obs
 <li class="toctree-l2"><a class="reference internal" href="#making-buttons-functional">Making Buttons Functional</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-buttons-with-functionality-or-links">Adding Buttons With Functionality or Links</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-obs-websockets-integration">Adding OBS Websockets Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-have-we-got">What Have We Got?</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="advanced_use.html">Advanced Uses</a></li>

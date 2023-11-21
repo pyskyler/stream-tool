@@ -25,8 +25,8 @@ class Button:
 
         """
 
-    def __init__(self, page: Page, name: str, button_function: callable = None, text: str = None,
-                 button_link: str = None):
+    def __init__(self, page: Page, name: str, button_function: callable = None, button_function_args: list = None,
+                 button_function_kwargs: dict = None, text: str = None,button_link: str = None):
         self._button_function = None
         self.page: Page = page
         self._name = None
@@ -36,6 +36,14 @@ class Button:
         else:
             self.text = text
         self.button_function = button_function
+        if button_function_args is not None:
+            self.button_function_args = button_function_args
+        else:
+            self.button_function_args = []
+        if button_function_kwargs is not None:
+            self.button_function_kwargs = button_function_kwargs
+        else:
+            self.button_function_kwargs = {}
         self.button_link = button_link
 
     @property

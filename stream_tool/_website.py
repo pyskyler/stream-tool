@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from ._page import Page
 
-from . import _data
+from . import builtin_obs_actions
 
 from ._create_obs_websocket_manager import create_obs_websocket_manager
 
@@ -41,7 +41,8 @@ class Website:
 
         if use_obs_websockets:
             self.ws = create_obs_websocket_manager()
-            _data.obs_websocket_manager = self.ws
+            builtin_obs_actions._ws = self.ws
+
 
     def add_page(self, name: str) -> Page:
         """ Add a page on the website
@@ -114,7 +115,9 @@ class Website:
                                        part_4=self.all_page_names[page_name].html_part_4)
             elif page_name in self.buttons_with_functions:
                 this_button = self.buttons_with_functions[page_name]
-                this_button.button_function()
+                args = this_button.button_function_args
+                kwargs = this_button.button_function_kwargs
+                this_button.button_function(*args, **kwargs)
                 return this_button.name
             else:
                 return render_template("404.html"), 404

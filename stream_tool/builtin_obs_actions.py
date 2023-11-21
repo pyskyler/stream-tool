@@ -14,7 +14,7 @@ _PAUSE_INPUT = "OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PAUSE"
 _PLAYING = "OBS_MEDIA_STATE_PLAYING"
 _PAUSED = "OBS_MEDIA_STATE_PAUSED"
 
-_ws = _data.obs_websocket_manager
+_ws = None
 
 
 def disconnect():

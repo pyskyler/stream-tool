@@ -64,7 +64,10 @@ class Page:
     # TODO: Make this work right
     @property
     def url(self):
-        url = f"/{self.name}"
+        if self.name != 'index':
+            url = f"/{self.name}"
+        else:
+            url = "/"
         return url
 
     def add_button(self, name: str, **kwargs) -> Button:

@@ -6,7 +6,7 @@ def convert_to_pascal_case(string: str):
 
 
 def format_url(url: str):
-    url_is_formatted = url.startswith("http://") or url.startswith("https://")
+    url_is_formatted = url.startswith("http://") or url.startswith("https://") or url.startswith("/")
     if url_is_formatted:
         return url
     else:

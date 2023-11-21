@@ -33,6 +33,296 @@
             
   <section id="advanced-uses">
 <h1>Advanced Uses<a class="headerlink" href="#advanced-uses" title="Link to this heading">¶</a></h1>
+<p>More advanced customized OBS integrations can be
+created as well as other more advanced Macros.</p>
+<p>We’ll look at three examples in this tutorial. (1) Using
+<code class="docutils literal notranslate"><span class="pre">obs-websocket-py</span></code> to create OBS macros that aren’t available
+in <code class="docutils literal notranslate"><span class="pre">builtin-obs-functions</span></code>. (2) Creating reusable functions to
+assign to a button and supplying arguments and keyword arguments
+for those. (3) Creating an advanced macro using other python
+libraries.</p>
+<section id="other-obs-functions">
+<h2>Other OBS Functions<a class="headerlink" href="#other-obs-functions" title="Link to this heading">¶</a></h2>
+<p>For this tutorial let’s make a button that will either fade or cut
+to a scene depending on which scene it’s currently on. Let’s also
+make sure it sets the transition back to whatever it was when the
+button was pressed.</p>
+<p>To follow along you’ll want to have OBS running in studio mode with
+a scene collection with three scenes and OBS WebSocket running. It’s
+helpful to have a color source in each to tell them apart. I’ll name
+mine <code class="docutils literal notranslate"><span class="pre">scene</span> <span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">scene</span> <span class="pre">2</span></code>, and <code class="docutils literal notranslate"><span class="pre">scene</span> <span class="pre">3</span></code> and use those names
+in the tutorial.</p>
+<p>You can use any module of your choice to interface with OBS
+websockets, but I’ll walk through using <code class="docutils literal notranslate"><span class="pre">obs-websocket-py</span></code> because
+its the one used by this library and so it is already installed and an object
+for interfacing will already be created.</p>
+<p>First make sure we import the necessary module from <code class="docutils literal notranslate"><span class="pre">obs-websocket-py</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obswebsocket</span> <span class="kn">import</span> <span class="n">requests</span>
+</pre></div>
+</div>
+<p>Then after we’ve created a website that is using OBS websockets let’s
+save the web socket manager object <code class="docutils literal notranslate"><span class="pre">ws</span></code> for interfacing with the websocket. Make sure you set
+the <a class="reference internal" href="getting_started.html#adding-obs-websockets-integration"><span class="std std-ref">connection and authentication info</span></a> if you need to.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stream_tool</span> <span class="kn">import</span> <span class="n">create_website</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">(</span><span class="n">use_obs_websockets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span> <span class="o">=</span> <span class="n">my_site</span><span class="o">.</span><span class="n">ws</span>
+</pre></div>
+</div>
+<p>We’ll define a function for making the macro.</p>
+<p>Following the <a class="reference external" href="https://github.com/Elektordi/obs-websocket-py/blob/master/README.md">documentation</a> for <code class="docutils literal notranslate"><span class="pre">obs-websocket-py</span></code> we can use the
+call method on our web socket manager <code class="docutils literal notranslate"><span class="pre">ws</span></code> to send a method from the requests class, like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">switch_to_scene1</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>     <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentPreviewScene</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">sceneName</span><span class="o">=</span><span class="s2">&quot;scene 1&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The name of the method to run on requests and the keyword arguments for
+that method are taken from the <code class="docutils literal notranslate"><span class="pre">obs-websocket</span></code> <a class="reference external" href="https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#requests">documentation</a>.</p>
+<p>You can see how setCurrentPreviewScene has one field named “sceneName” that
+takes a string in that request’s <a class="reference external" href="https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#setcurrentpreviewscene">documentation</a>.</p>
+<p>We can set the scene and run the transition in the same fashion using the requests
+from <code class="docutils literal notranslate"><span class="pre">obs-websocket</span></code> <a class="reference external" href="https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#setcurrentscenetransition">SetCurrentSceneTransition</a> and <a class="reference external" href="https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#triggerstudiomodetransition">TriggerStudioModeTransition</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">switch_to_scene1</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">transition</span> <span class="o">=</span> <span class="s2">&quot;Fade&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentPreviewScene</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">sceneName</span><span class="o">=</span><span class="s2">&quot;scene 1&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentSceneTransition</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">transitionName</span><span class="o">=</span><span class="n">transition</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">TriggerStudioModeTransition</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>In order to make it so we do a different transition based on what
+scene is currently active we have to get data from the OBS
+and save it. We’ll use <a class="reference external" href="https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#getcurrentprogramscene">GetCurrentProgramScene</a> and we’ll assign what
+it returns to <code class="docutils literal notranslate"><span class="pre">response</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">GetCurrentProgramScene</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>From the <code class="docutils literal notranslate"><span class="pre">response</span></code> object we’ll read its dictionary <code class="docutils literal notranslate"><span class="pre">datain</span></code>.
+This dictionary will have the names of the response fields as keys
+and the values will be the associated response data. In this case the key is
+<code class="docutils literal notranslate"><span class="pre">'currentProgramSceneName'</span></code> and it will hold a string with the name
+of the current scene in program. We’ll save it like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">current_scene_name</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">datain</span><span class="p">[</span><span class="s1">&#39;currentProgramSceneName&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>I currently have <code class="docutils literal notranslate"><span class="pre">'scene</span> <span class="pre">2'</span></code> in program so if I check it’s value we’ll
+see it says that:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">current_scene_name</span>
+<span class="go">scene 2</span>
+</pre></div>
+</div>
+<p>Let’s add that into our function with some logic to fade if we are
+currently on scene 2 and cut if we are currently on scene 3:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">switch_to_scene1</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">response</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">GetCurrentProgramScene</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">current_scene_name</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">datain</span><span class="p">[</span><span class="s1">&#39;currentProgramSceneName&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">current_scene_name</span> <span class="o">==</span> <span class="s2">&quot;scene 2&quot;</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">transition</span> <span class="o">=</span> <span class="s2">&quot;Fade&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">elif</span> <span class="n">current_scene_name</span> <span class="o">==</span> <span class="s2">&quot;scene 3&quot;</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">transition</span> <span class="o">=</span> <span class="s2">&quot;Cut&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentPreviewScene</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">sceneName</span><span class="o">=</span><span class="s2">&quot;scene 1&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentSceneTransition</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">transitionName</span><span class="o">=</span><span class="n">transition</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">TriggerStudioModeTransition</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Let’s make sure that whatever the transition was set to when
+the button was pressed it is set to again. We don’t want to mess
+anyone up by suddenly changing the scene transition. We’ll do this similarly to how we
+got the current scene, using <a class="reference external" href="https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#getcurrentscenetransition">GetCurrentSceneTransition</a> and
+<a class="reference external" href="https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#setcurrentscenetransition">SetCurrentSceneTransition</a>.</p>
+<p>Let’s also add in handling for the case where a different scene is in
+program, like scene 1. There also needs to be a bit of time between running
+the transition and setting it back if the transition takes time (like a fade).
+This is because if we change the transition instantly, it’ll stop running the
+current transition.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">switch_to_scene1</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">response</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">GetCurrentSceneTransition</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">start_transition</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">datain</span><span class="p">[</span><span class="s1">&#39;transitionName&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">response</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">GetCurrentProgramScene</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">current_scene_name</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">datain</span><span class="p">[</span><span class="s1">&#39;currentProgramSceneName&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">current_scene_name</span> <span class="o">==</span> <span class="s2">&quot;scene 2&quot;</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">transition</span> <span class="o">=</span> <span class="s2">&quot;Fade&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">elif</span> <span class="n">current_scene_name</span> <span class="o">==</span> <span class="s2">&quot;scene 3&quot;</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">transition</span> <span class="o">=</span> <span class="s2">&quot;Cut&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentPreviewScene</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">sceneName</span><span class="o">=</span><span class="s2">&quot;scene 1&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentSceneTransition</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">transitionName</span><span class="o">=</span><span class="n">transition</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">TriggerStudioModeTransition</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">transition</span> <span class="o">==</span> <span class="s2">&quot;Fade&quot;</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentSceneTransition</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">transitionName</span><span class="o">=</span><span class="n">start_transition</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Now if we create a button on the index page to do this, attach
+this function to it and run the site we can see what happens:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span><span class="o">.</span><span class="n">index_page</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;Scene 1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">button_function</span><span class="o">=</span><span class="n">switch_to_scene1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">()</span>
+<span class="go"> * Serving Flask app &#39;stream_tool._website&#39;</span>
+<span class="go"> * Debug mode: off</span>
+<span class="go">WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.</span>
+<span class="go"> * Running on http://127.0.0.1:5000</span>
+<span class="go">Press CTRL+C to quit</span>
+</pre></div>
+</div>
+<p>If we set the scene to scene 2 in obs and press the button
+we should now see it fade to scene 1. If we set the scene
+to scene 3 in obs we should now see it cut to scene 1. Whatever
+transition was set as the scene transition when the button was
+should be set again as well.</p>
+</section>
+<section id="functions-with-arguments">
+<h2>Functions With Arguments<a class="headerlink" href="#functions-with-arguments" title="Link to this heading">¶</a></h2>
+<p>Let’s say you want to have buttons to transform your sources in
+some way. It would be quite inefficient to create a function for
+each type of transformation and different source, so we can create
+one function to fill our transforming needs and pass arguments to it.</p>
+<p>To follow along you’ll want to have OBS running in studio mode with a
+scene and a source and OBS WebSocket running. I’ll name my scene <code class="docutils literal notranslate"><span class="pre">'scene</span> <span class="pre">1'</span></code>
+and my source <code class="docutils literal notranslate"><span class="pre">'Color</span> <span class="pre">Source'</span></code> and use those names in the tutorial.</p>
+<p>We can create this function using the functions from <code class="docutils literal notranslate"><span class="pre">builtin_obs_actions</span></code>
+<code class="docutils literal notranslate"><span class="pre">get_source_transform</span></code> and <code class="docutils literal notranslate"><span class="pre">set_source_transform</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stream_tool</span> <span class="kn">import</span> <span class="n">builtin_obs_actions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">transform_source</span><span class="p">(</span><span class="n">scene_name</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">move_x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">move_y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">current_transform</span> <span class="o">=</span> <span class="n">builtin_obs_actions</span><span class="o">.</span><span class="n">get_source_transform</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">scene_name</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">source_name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">new_transform</span> <span class="o">=</span> <span class="n">current_transform</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">new_transform</span><span class="p">[</span><span class="s1">&#39;positionX&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">move_x</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">new_transform</span><span class="p">[</span><span class="s1">&#39;positionY&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">move_y</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">new_transform</span><span class="p">[</span><span class="s1">&#39;scaleX&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="n">scale</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">new_transform</span><span class="p">[</span><span class="s1">&#39;scaleY&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="n">scale</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">builtin_obs_actions</span><span class="o">.</span><span class="n">set_source_transform</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">scene_name</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">source_name</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">new_transform</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s create some buttons on an index page to transform
+this source. Make sure to set any <a class="reference internal" href="getting_started.html#adding-obs-websockets-integration"><span class="std std-ref">authentication and connection</span></a> information before creating
+your website. First we need a site with OBS websocket integration
+and to save our index page:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stream_tool</span> <span class="kn">import</span> <span class="n">create_website</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">(</span><span class="n">use_obs_websockets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">my_site</span><span class="o">.</span><span class="n">index_page</span>
+</pre></div>
+</div>
+<p>Next, we will create our first button for shrinking the source by
+half. To do this use the <code class="docutils literal notranslate"><span class="pre">button_function_args</span></code> parameter of add
+button to add the arguments and <code class="docutils literal notranslate"><span class="pre">button_function_kwargs</span></code> to
+add the keyword arguments.</p>
+<p><code class="docutils literal notranslate"><span class="pre">button_function_args</span></code> takes a list of arguments or a single argument
+and <code class="docutils literal notranslate"><span class="pre">button_function_kwargs</span></code> takes a dictionary of keyword
+arguments with keywords as keys and the arguments as the values.</p>
+<p>To use this to create our button, we’ll send our
+<code class="docutils literal notranslate"><span class="pre">scene_name</span></code> and <code class="docutils literal notranslate"><span class="pre">source_name</span></code> arguments and the value for the
+<code class="docutils literal notranslate"><span class="pre">scale</span></code> keyword argument:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;Shrink&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">button_function</span><span class="o">=</span><span class="n">transform_source</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">button_function_args</span><span class="o">=</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s2">&quot;scene 1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;Color Source&quot;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">button_function_kwargs</span><span class="o">=</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>We can add another button but instead of using the parameters of
+<code class="docutils literal notranslate"><span class="pre">add_button</span></code> we can assign values to the button’s attributes after
+creating it. This one will move the source down and to the right a bit:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">btn2</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;Down Right&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btn2</span><span class="o">.</span><span class="n">button_function</span> <span class="o">=</span> <span class="n">transform_source</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btn2</span><span class="o">.</span><span class="n">button_function_args</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;scene 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Color Source&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btn2</span><span class="o">.</span><span class="n">button_function_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;moveX&#39;</span><span class="p">:</span> <span class="mi">50</span>
+<span class="gp">... </span>    <span class="s1">&#39;moveY&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">50</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>This function can be used to create buttons with other
+combinations of the move and scale and for other sources.</p>
+<p>When you’re ready to see what you’ve got run it and try it out:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">()</span>
+<span class="go"> * Serving Flask app &#39;stream_tool._website&#39;</span>
+<span class="go"> * Debug mode: off</span>
+<span class="go">WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.</span>
+<span class="go"> * Running on http://127.0.0.1:5000</span>
+<span class="go">Press CTRL+C to quit</span>
+</pre></div>
+</div>
+<p>That’s how you build custom functions with arguments and keyword
+arguments!</p>
+</section>
+<section id="macros-with-other-libraries">
+<h2>Macros With Other Libraries<a class="headerlink" href="#macros-with-other-libraries" title="Link to this heading">¶</a></h2>
+<p>Functions are useful for making macros because they can run any code
+you want to. Just import the necessary libraries and incorporate them
+in your function.</p>
+<p>To follow along you’ll want to have OBS running with
+two scenes and OBS WebSocket running. I’ll name
+mine <code class="docutils literal notranslate"><span class="pre">'scene</span> <span class="pre">1'</span></code>, and <code class="docutils literal notranslate"><span class="pre">'scene</span> <span class="pre">2'</span></code> and use those names
+in the tutorial.</p>
+<p>Here’s an example using <code class="docutils literal notranslate"><span class="pre">random</span></code> to pick a random scene to go to,
+<code class="docutils literal notranslate"><span class="pre">obs-websocket-py</span></code> to go to it and <code class="docutils literal notranslate"><span class="pre">pyclip</span></code> to put something in the clipboard.</p>
+<p>Pyclip <a class="reference external" href="https://github.com/spyoungtech/pyclip">documentation</a> can be consulted for installation.</p>
+<p>First we’ll import the modules:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stream_tool</span> <span class="kn">import</span> <span class="n">create_website</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">obswebsocket</span> <span class="kn">import</span> <span class="n">requests</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">random</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyclip</span>
+</pre></div>
+</div>
+<p>Next, we’ll create our site with OBS websocket integration and
+save the index page and the websocket manager. Make sure
+to set any <a class="reference internal" href="getting_started.html#adding-obs-websockets-integration"><span class="std std-ref">authentication and connection</span></a> information before creating your website.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span> <span class="o">=</span> <span class="n">create_website</span><span class="p">(</span><span class="n">use_obs_websockets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">my_site</span><span class="o">.</span><span class="n">index_page</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span> <span class="o">=</span> <span class="n">my_site</span><span class="o">.</span><span class="n">ws</span>
+</pre></div>
+</div>
+<p>We need to make the actual function to perform all our actions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">btn1_function</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">random_number</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">random_number</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentProgramScene</span><span class="p">(</span><span class="n">sceneName</span><span class="o">=</span><span class="s2">&quot;scene 1&quot;</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">ws</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">SetCurrentProgramScene</span><span class="p">(</span><span class="n">sceneName</span><span class="o">=</span><span class="s2">&quot;scene 2&quot;</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="n">pyclip</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">&quot;hello clipboard&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s add a button and connect the function to it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;stuff&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">button_function</span><span class="o">=</span><span class="n">btn1_function</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now if we run the site we’ll have a button to
+control the scenes randomly. The button will also
+add new text to the clipboard that can be pasted.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_site</span><span class="o">.</span><span class="n">build_and_run</span><span class="p">()</span>
+<span class="go"> * Serving Flask app &#39;stream_tool._website&#39;</span>
+<span class="go"> * Debug mode: off</span>
+<span class="go">WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.</span>
+<span class="go"> * Running on http://127.0.0.1:5000</span>
+<span class="go">Press CTRL+C to quit</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>That’s all I wrote.</p>
+<p>For my information on anything check out the <a class="reference internal" href="api.html"><span class="doc">API documenation</span></a>.</p>
+</section>
 </section>
 
 
@@ -55,7 +345,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Stream Tool Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced Uses</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced Uses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#other-obs-functions">Other OBS Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions-with-arguments">Functions With Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#macros-with-other-libraries">Macros With Other Libraries</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>

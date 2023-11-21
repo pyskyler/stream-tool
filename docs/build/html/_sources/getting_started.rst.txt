@@ -17,7 +17,7 @@ the end of your script and run at any point to see your progress. You
 can also use ``print()`` commands to see what the attributes return. This
 is because of an issue with running ``build_and_run`` in the console
 multiple times which is explained in the footnote to the :ref:`Running
-the Website <running>` section.
+the Website <running the website>` section.
 
 Importing
 ---------
@@ -48,8 +48,6 @@ With Stream Tool imported, to get started, use the ``create_website`` function t
 This returns an instance of the class ``Website`` and assigns it to the variable my_site.
 
 That instance will have an empty website with a blank index page.
-
-.. _`running`:
 
 Running the Website
 --------------------
@@ -308,7 +306,7 @@ it by.
 Remember to replace ``'your_input_name'`` with the actual name of the input in your OBS configuration.
 
 There are other functions in ``builtin_obs_actions`` that can be used in the same fashion. There's
-a list in the API documentation :ref:`here<obs_functions_section>`.
+a list in the API documentation :ref:`here<obs functions>`.
 
 What Have We Got?
 --------------------

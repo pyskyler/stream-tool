@@ -37,11 +37,11 @@ class Button:
             self.text = text
         self.button_function = button_function
         if button_function_args is not None:
-            self.button_function_args = button_function_args
+            self.button_function_args = list(button_function_args)
         else:
             self.button_function_args = []
         if button_function_kwargs is not None:
-            self.button_function_kwargs = button_function_kwargs
+            self.button_function_kwargs = dict(button_function_kwargs)
         else:
             self.button_function_kwargs = {}
         self.button_link = button_link

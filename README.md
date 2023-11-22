@@ -5,6 +5,8 @@ Use Stream Tool to create macros to control OBS or other programs on your comput
 
 There is currently built-in functionality to run control some basic parts of OBS and to send your own OBS websocket requests. Other functionality may be added in the future but the main feature is that a function can be created and attached to a button to run it.
 
+Project documentation is hosted at Read the Docs [here](https://stream-tool.readthedocs.io).
+
 
 ## Installing Stream Tool
 
@@ -18,7 +20,7 @@ Stream Tool officially supports Python 3.10+.
 
 ## Documentation
 
-Full public API documentation as well as several tutorial to get started are available on read the docs. A quick start is available below to show you the jist of it.
+Full public API documentation as well as several tutorial to get started are available at [Read the Docs](https://stream-tool.readthedocs.io). A quick start is available below to show you the jist of it.
 
 ## Quick Start
 

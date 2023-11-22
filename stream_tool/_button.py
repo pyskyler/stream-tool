@@ -16,10 +16,14 @@ class Button:
         ----------
         name: str
             The name of the button
-        button_function: callable
-            Action for button to run on press
         text: str
             Text for the button, defaults to the name parameter
+        button_function: callable
+            Action for button to run on press
+        button_function_args: list, Any
+            Arguments or single argument to be passed to button_function
+        button_function_kwargs: dict,
+            Keyword arguments to be passed to button_function
         button_link: str
             A url to a relative page on the site or any page on the web
 
@@ -37,7 +41,10 @@ class Button:
             self.text = text
         self.button_function = button_function
         if button_function_args is not None:
-            self.button_function_args = list(button_function_args)
+            if isinstance(button_function_args, list):
+                self.button_function_args = button_function_args
+            else:
+                self.button_function_args = [button_function_args]
         else:
             self.button_function_args = []
         if button_function_kwargs is not None:

@@ -201,6 +201,17 @@ externally as well.</p></li>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="stream_tool._button.Button.text">
+<span class="sig-name descname"><span class="pre">text</span></span><a class="headerlink" href="#stream_tool._button.Button.text" title="Link to this definition">¶</a></dt>
+<dd><p>Text for the button, defaults to the name parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="stream_tool._button.Button.button_function">
 <span class="sig-name descname"><span class="pre">button_function</span></span><a class="headerlink" href="#stream_tool._button.Button.button_function" title="Link to this definition">¶</a></dt>
 <dd><p>Action for button to run on press</p>
@@ -212,12 +223,23 @@ externally as well.</p></li>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="stream_tool._button.Button.text">
-<span class="sig-name descname"><span class="pre">text</span></span><a class="headerlink" href="#stream_tool._button.Button.text" title="Link to this definition">¶</a></dt>
-<dd><p>Text for the button, defaults to the name parameter</p>
+<dt class="sig sig-object py" id="stream_tool._button.Button.button_function_args">
+<span class="sig-name descname"><span class="pre">button_function_args</span></span><a class="headerlink" href="#stream_tool._button.Button.button_function_args" title="Link to this definition">¶</a></dt>
+<dd><p>Arguments or single argument to be passed to button_function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>list, Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stream_tool._button.Button.button_function_kwargs">
+<span class="sig-name descname"><span class="pre">button_function_kwargs</span></span><a class="headerlink" href="#stream_tool._button.Button.button_function_kwargs" title="Link to this definition">¶</a></dt>
+<dd><p>Keyword arguments to be passed to button_function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict,</p>
 </dd>
 </dl>
 </dd></dl>
@@ -357,24 +379,37 @@ For a text source, this will return settings like its font, color, etc</p>
 <dt class="sig sig-object py" id="stream_tool.builtin_obs_actions.get_source_transform">
 <span class="sig-prename descclassname"><span class="pre">stream_tool.builtin_obs_actions.</span></span><span class="sig-name descname"><span class="pre">get_source_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stream_tool.builtin_obs_actions.get_source_transform" title="Link to this definition">¶</a></dt>
 <dd><p>The current transform effects on a source</p>
-<p>Used in combination with set_source_transform to change the transform values of a source.</p>
+<p>Used in combination with set_source_transform to change the transform values of a source.
+Keys in the return dictionary are: positionX, positionY, scaleX, scaleY, cropTop, cropBottom,
+cropLeft, cropRight, rotation. See: set_source_transform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>scene_name</strong> – </p></li>
-<li><p><strong>source_name</strong> – </p></li>
+<li><p><strong>scene_name</strong> (<em>str</em>) – The name of the scene containing the source to get transform</p></li>
+<li><p><strong>source_name</strong> (<em>str</em>) – The name of the source to get transform</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Every aspect that can be transformed as a key and its current value as the value</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">stream_tool</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">source_current_transform</span> <span class="o">=</span> <span class="n">builtin_obs_actions</span><span class="o">.</span><span class="n">get_source_transform</span><span class="p">(</span><span class="s2">&quot;my scene 1&quot;</span><span class="p">,</span> <span class="s2">&quot;source I want to change&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source_current_transform</span> <span class="o">=</span>
+<span class="gp">... </span>    <span class="n">builtin_obs_actions</span><span class="o">.</span><span class="n">get_source_transform</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s2">&quot;my scene 1&quot;</span><span class="p">,</span> <span class="s2">&quot;source I want to change&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source_new_transform</span> <span class="o">=</span> <span class="n">source_current_transform</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Move 100 pixels to the right</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source_new_transform</span><span class="p">[</span><span class="s2">&quot;positionX&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># set bottom crop to 50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source_new_transform</span><span class="p">[</span><span class="s2">&quot;cropBottom&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">builtin_obs_actions</span><span class="o">.</span><span class="n">set_source_transform</span><span class="p">(</span><span class="s2">&quot;my scene 1&quot;</span><span class="p">,</span> <span class="s2">&quot;source I want to change&quot;</span><span class="p">,</span> <span class="n">source_new_transform</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builtin_obs_actions</span><span class="o">.</span><span class="n">set_source_transform</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;my scene 1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;source I want to change&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">source_new_transform</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

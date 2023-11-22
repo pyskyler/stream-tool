@@ -110,22 +110,36 @@ def get_source_transform(scene_name, source_name):
     """ The current transform effects on a source
 
     Used in combination with set_source_transform to change the transform values of a source.
+    Keys in the return dictionary are: positionX, positionY, scaleX, scaleY, cropTop, cropBottom,
+    cropLeft, cropRight, rotation. See: set_source_transform.
 
     Parameters
     ----------
-    scene_name
-    source_name
+    scene_name: str
+        The name of the scene containing the source to get transform
+    source_name: str
+        The name of the source to get transform
+
+    Returns
+    -------
+    dict
+        Every aspect that can be transformed as a key and its current value as the value
 
     Examples
     --------
     >>> import stream_tool
-    >>> source_current_transform = builtin_obs_actions.get_source_transform("my scene 1", "source I want to change")
+    >>> source_current_transform =
+    ...     builtin_obs_actions.get_source_transform(
+    ...         "my scene 1", "source I want to change")
     >>> source_new_transform = source_current_transform
     >>> # Move 100 pixels to the right
     >>> source_new_transform["positionX"] += 100
     >>> # set bottom crop to 50
     >>> source_new_transform["cropBottom"] = 50
-    >>> builtin_obs_actions.set_source_transform("my scene 1", "source I want to change", source_new_transform)
+    >>> builtin_obs_actions.set_source_transform(
+    ...     "my scene 1",
+    ...     "source I want to change",
+    ...     source_new_transform)
 
     """
     response = _ws.call(requests.GetSceneItemId(sceneName=scene_name, sourceName=source_name))

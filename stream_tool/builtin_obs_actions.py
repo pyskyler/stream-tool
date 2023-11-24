@@ -7,7 +7,9 @@ to make them happen on a button click.
 from . import _data
 from obswebsocket import requests
 
-# TODO: share errors with user
+# TODO: share (obs websocket?) errors with user
+# TODO: create error handlign for trying to use obs functions wihtout use_obs_websockets enabled
+#  could be on button press or could be done in the build and run step in some way
 
 _PLAY_INPUT = "OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PLAY"
 _STOP_INPUT = "OBS_WEBSOCKET_MEDIA_INPUT_ACTION_STOP"

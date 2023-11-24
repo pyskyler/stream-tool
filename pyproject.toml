@@ -1,10 +1,12 @@
 [tool.poetry]
 name = "stream-tool"
-version = "0.1.0"
+version = "0.1.1"
 description = "a simple tool for making macros"
 authors = ["skylerficklin <skylerficklin@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/pyskyler/stream-tool"
+documentation = "https://stream-tool.readthedocs.io"
 
 [tool.poetry.dependencies]
 python = "^3.10"

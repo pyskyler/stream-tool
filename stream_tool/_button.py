@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from ._formatting_and_converting import convert_to_pascal_case, format_url
 from .exceptions import DuplicateButtonNameError, ButtonNameSyntaxError
-from ._data import restricted_use_names
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -75,17 +74,17 @@ class Button:
         name = convert_to_pascal_case(name)
         self._name = name
 
-        if name in restricted_use_names:
+        if name in self.page.website.restricted_use_names:
             if name in self.page.all_button_names:
                 raise DuplicateButtonNameError(f"Button name {name} already in use. Use a different name.")
             else:
                 raise DuplicateButtonNameError(f"Button name {name} is not allowed to be used. Use a different name. "
-                                               f"Restricted use names are in list main.restricted_use_names. "
-                                               f"They are currently: {restricted_use_names}")
+                                               f"Restricted use names are in list website.restricted_use_names. "
+                                               f"They are currently: {self.page.website.restricted_use_names}")
         if name[-1] == "?":
             raise ButtonNameSyntaxError(f"Button name {name} can't end in '?'")
 
-        restricted_use_names.append(name)
+        self.page.website.restricted_use_names.append(name)
 
         # TODO: Does this removing and adding every time a name changes need to exist or can
         #  the list just be created later with a list comprehension (or a dict comprehension)?

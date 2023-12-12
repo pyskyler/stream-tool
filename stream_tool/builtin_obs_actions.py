@@ -4,7 +4,6 @@ Has a set of functions that can be run to tell OBS to do something. These can be
 to make them happen on a button click.
 
 """
-from . import _data
 from obswebsocket import requests
 
 # TODO: share (obs websocket?) errors with user

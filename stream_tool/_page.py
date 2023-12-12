@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from .exceptions import DuplicatePageNameError
-from ._data import restricted_use_names
 from._formatting_and_converting import format_page_name
 
 from typing import TYPE_CHECKING
@@ -41,7 +40,7 @@ class Page:
         if self.name is not None:
             previous_name = self.name
 
-            restricted_use_names.remove(previous_name)
+            self.website.restricted_use_names.remove(previous_name)
 
             self.website.all_page_names.pop(previous_name)
 
@@ -49,7 +48,7 @@ class Page:
 
         self._name = name
 
-        if name in restricted_use_names:
+        if name in self.website.restricted_use_names:
             if name in self.website.all_page_names:
                 raise DuplicatePageNameError(f"Page name {name} already in use. Use a different name.")
             else:
@@ -57,7 +56,7 @@ class Page:
                                              f"Restricted use names are in list main.restricted_use_names. "
                                              f"They are currently: {restricted_use_names}")
 
-        restricted_use_names.append(name)
+        self.website.restricted_use_names.append(name)
 
         self.website.all_page_names[name] = self
 

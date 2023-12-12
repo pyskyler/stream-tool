@@ -35,9 +35,9 @@ class Website:
                           static_folder="resources/static", static_url_path="/static")
         self.all_pages: list[Page] = []
         self.all_page_names: dict[str, Page] = {}
+        self.restricted_use_names = ["standard_files"]
         self.index_page = self.add_page('index')
         self.buttons_with_functions: dict[str, Button] = {}
-        self.restricted_use_names = ["standard_files"]
         Website.one_website_made = True
 
         if use_obs_websockets:

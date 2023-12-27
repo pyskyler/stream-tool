@@ -54,7 +54,7 @@ class Page:
             else:
                 raise DuplicatePageNameError(f"Page name {name} is not allowed to be used. Use a different name. "
                                              f"Restricted use names are in list main.restricted_use_names. "
-                                             f"They are currently: {restricted_use_names}")
+                                             f"They are currently: {self.website.restricted_use_names}")
 
         self.website.restricted_use_names.append(name)
 

@@ -39,17 +39,10 @@ class Button:
         else:
             self.text = text
         self.button_function = button_function
-        if button_function_args is not None:
-            if isinstance(button_function_args, list):
-                self.button_function_args = button_function_args
-            else:
-                self.button_function_args = [button_function_args]
-        else:
-            self.button_function_args = []
-        if button_function_kwargs is not None:
-            self.button_function_kwargs = dict(button_function_kwargs)
-        else:
-            self.button_function_kwargs = {}
+        self._button_function_args = None
+        self.button_function_args = button_function_args
+        self._button_function_kwargs = None
+        self.button_function_kwargs = button_function_kwargs
         self.button_link = button_link
 
     @property
@@ -63,6 +56,34 @@ class Button:
         self._button_function = function
         if self.button_function is not None:
             self.page.website.buttons_with_functions[self.name]: Button = self
+
+    @property
+    def button_function_args(self):
+        return self._button_function_args
+
+    @button_function_args.setter
+    def button_function_args(self, args):
+        if args is not None:
+            if isinstance(args, list):
+                self._button_function_args = args
+            else:
+                self._button_function_args = [args]
+        else:
+            self._button_function_args = []
+
+    @property
+    def button_function_kwargs(self):
+        return self._button_function_kwargs
+
+    @button_function_kwargs.setter
+    def button_function_kwargs(self, kwargs):
+        if kwargs is not None:
+            if isinstance(kwargs, dict):
+                self._button_function_kwargs = kwargs
+            else:
+                self._button_function_kwargs = dict([kwargs])
+        else:
+            self._button_function_kwargs = {}
 
     @property
     def name(self):

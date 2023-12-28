@@ -96,13 +96,9 @@ class Website:
             else:
                 return render_template("404.html"), 404
 
-    def _run(self, host='127.0.0.1', port=5000, debug=False, testing=False):
+    def _run(self, host='127.0.0.1', port=5000, debug=False):
 
-        if not testing:
-            self._app.run(host=host, port=port, debug=debug)
-
-        if testing:
-            self._app.test_client()
+        self._app.run(host=host, port=port, debug=debug)
 
     def build_and_run(self, host="127.0.0.1", port=5000, debug=False):
         """ Build website files and routes and run it

@@ -69,6 +69,41 @@ class Website:
         self.all_pages.append(created_page)
         return created_page
 
+    def _build(self):
+
+        for page in self.all_pages:
+            for button in page.all_buttons:
+                button.build()
+
+        @self._app.route('/')
+        def show_index():
+            return render_template("page_template.html",
+                                   part_2=self.all_page_names["index"].html_part_2,
+                                   part_4=self.all_page_names["index"].html_part_4)
+
+        @self._app.route('/<page_name>')
+        def show_page(page_name):
+            if page_name in self.all_page_names:
+                return render_template("page_template.html",
+                                       part_2=self.all_page_names[page_name].html_part_2,
+                                       part_4=self.all_page_names[page_name].html_part_4)
+            elif page_name in self.buttons_with_functions:
+                this_button = self.buttons_with_functions[page_name]
+                args = this_button.button_function_args
+                kwargs = this_button.button_function_kwargs
+                this_button.button_function(*args, **kwargs)
+                return this_button.name
+            else:
+                return render_template("404.html"), 404
+
+    def _run(self, host='127.0.0.1', port=5000, debug=False, testing=False):
+
+        if not testing:
+            self._app.run(host=host, port=port, debug=debug)
+
+        if testing:
+            self._app.test_client()
+
     def build_and_run(self, host="127.0.0.1", port=5000, debug=False):
         """ Build website files and routes and run it
 
@@ -98,29 +133,7 @@ class Website:
 
 
         """
-        for page in self.all_pages:
-            for button in page.all_buttons:
-                button.build()
 
-        @self._app.route('/')
-        def show_index():
-            return render_template("page_template.html",
-                                   part_2=self.all_page_names["index"].html_part_2,
-                                   part_4=self.all_page_names["index"].html_part_4)
+        self._build()
 
-        @self._app.route('/<page_name>')
-        def show_page(page_name):
-            if page_name in self.all_page_names:
-                return render_template("page_template.html",
-                                       part_2=self.all_page_names[page_name].html_part_2,
-                                       part_4=self.all_page_names[page_name].html_part_4)
-            elif page_name in self.buttons_with_functions:
-                this_button = self.buttons_with_functions[page_name]
-                args = this_button.button_function_args
-                kwargs = this_button.button_function_kwargs
-                this_button.button_function(*args, **kwargs)
-                return this_button.name
-            else:
-                return render_template("404.html"), 404
-
-        self._app.run(host=host, port=port, debug=debug)
+        self._run(host, port, debug)

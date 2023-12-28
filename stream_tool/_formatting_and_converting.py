@@ -1,7 +1,10 @@
 
 def convert_to_pascal_case(string: str):
-    string = string.title()
-    string = string.replace(" ", "")
+    if ' ' in string:
+        string = string.title()
+        string = string.replace(" ", "")
+    else:
+        string = string[0].capitalize() + string[1:]
     return string
 
 

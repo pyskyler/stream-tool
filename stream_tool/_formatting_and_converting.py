@@ -1,5 +1,7 @@
 
 def convert_to_pascal_case(string: str):
+    string = string.replace("-", " ")
+    string = string.replace("_", " ")
     if ' ' in string:
         string = string.title()
         string = string.replace(" ", "")

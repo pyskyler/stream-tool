@@ -20,4 +20,5 @@ def format_url(url: str):
 
 def format_page_name(page_name: str):
     page_name = page_name.replace(" ", "-")
+    page_name = page_name.replace("_", "-")
     return page_name

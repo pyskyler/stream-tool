@@ -1,6 +1,5 @@
 import unittest
 from stream_tool import create_website, _website, _page, _button, exceptions
-import time
 
 
 class TestCreateWebsite(unittest.TestCase):

@@ -44,14 +44,16 @@ class Website:
             self.ws = create_obs_websocket_manager()
             builtin_obs_actions._ws = self.ws
 
-
-    def add_page(self, name: str) -> Page:
+    def add_page(self, name: str, button_color: str = "#3498DB") -> Page:
         """ Add a page on the website
 
         Parameters
         ----------
         name : str
             name of page displayed in tab
+        button_color : str
+            the default color for the buttons on the page, default is "#3498db".
+            follows the same rules as the color attribute of Button class
 
         Returns
         -------
@@ -65,7 +67,7 @@ class Website:
         >>> my_page = my_site.add_page('My-Page-Name')
 
         """
-        created_page: Page = Page(self, name)
+        created_page: Page = Page(self, name, button_color)
         self.all_pages.append(created_page)
         return created_page
 
@@ -77,6 +79,7 @@ class Website:
         @self._app.route('/')
         def show_index():
             return render_template("page_template.html",
+                                   button_color=self.all_page_names["index"].button_color,
                                    part_2=self.all_page_names["index"].html_part_2,
                                    part_4=self.all_page_names["index"].html_part_4)
 
@@ -84,6 +87,7 @@ class Website:
         def show_page(page_name):
             if page_name in self.all_page_names:
                 return render_template("page_template.html",
+                                       button_color=self.all_page_names[page_name].button_color,
                                        colors=self.all_page_names[page_name].html_button_classes,
                                        part_2=self.all_page_names[page_name].html_part_2,
                                        part_4=self.all_page_names[page_name].html_part_4)

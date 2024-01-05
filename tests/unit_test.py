@@ -232,12 +232,6 @@ class TestAddButton(unittest.TestCase):
         self.assertEqual(orange_btn.color, "#FFA500", "color formatting during build did not work correctly")
         self.assertEqual(yellow_btn.color, "#FFFF00", "color formatting during build did not work correctly")
 
-
-
-
-    def test_button_color_html(self):
-        return
-
     def test_button_color_flask(self):
         blue_btn = self.page.add_button("test button", color="blue")
         red_btn = self.page.add_button("test2", color="rED")
@@ -264,6 +258,62 @@ class TestAddButton(unittest.TestCase):
                       "live html on server for button class colors does not match expected html")
         self.assertIn(page_html_buttons, server_page_html,
                       "live html on server for button w/ colors does not match expected html")
+
+    def TestButtonDefaultColor(self):
+        self.page.button_color = "aqua"
+        page_2 = self.website.add_page("page2", button_color="FFFF00")
+
+        self.website._build()
+
+        self.app = self.website._app.test_client()
+        r1 = self.app.get('/button-page')
+        r2 = self.app.get('/page2')
+        r3 = self.app.get('/')
+
+        server_page1_html = r1.data
+        server_page2_html = r2.data
+        server_page3_html = r3.data
+
+        button1 = "button { \n\t\t\t\
+            width: 100%; \n\t\t\t\
+            height: 100%; \n\t\t\t\
+            border: none; \n\t\t\t\
+            background-color: aqua; \n\t\t\t\
+            color: white; \n\t\t\t\
+            font-size: 50px; \n\t\t\t\
+            border-radius: 25px; \n\t\t\
+        }"
+
+        button2 = "button { \n\t\t\t\
+            width: 100%; \n\t\t\t\
+            height: 100%; \n\t\t\t\
+            border: none; \n\t\t\t\
+            background-color: #FFFF00; \n\t\t\t\
+            color: white; \n\t\t\t\
+            font-size: 50px; \n\t\t\t\
+            border-radius: 25px; \n\t\t\
+        }"
+
+        button3 = "button { \n\t\t\t\
+            width: 100%; \n\t\t\t\
+            height: 100%; \n\t\t\t\
+            border: none; \n\t\t\t\
+            background-color: #3498DB; \n\t\t\t\
+            color: white; \n\t\t\t\
+            font-size: 50px; \n\t\t\t\
+            border-radius: 25px; \n\t\t\
+        }"
+
+        button1 = button1.encode("utf-8")
+        button2 = button2.encode("utf-8")
+        button3 = button3.encode("utf-8")
+        self.assertIn(button1, server_page1_html,
+                      "live html on server for page button default color does not match expected html")
+        self.assertIn(button2, server_page2_html,
+                      "live html on server for page button default color does not match expected html")
+        self.assertIn(button3, server_page3_html,
+                      "live html on server for page button default color does not match expected html")
+
 
 # TODO: test obs websocket
 

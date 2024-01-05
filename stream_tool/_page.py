@@ -19,14 +19,18 @@ class Page:
         The url for the page. Spaces will be replaced with dashes.
     url: str
         This is a property that can get the relative url for this page on the website
+    button_color: str
+        the default color for the buttons on the page, default is "#3498db".
+        follows the same rules as the color attribute of Button class
 
     """
-    def __init__(self, website: Website, name):
+    def __init__(self, website: Website, name, button_color):
         self._name: str | None = None
         self.website: Website = website
         self.name = name
         self.all_buttons: list[Button] = []
         self.all_button_names: list[str] = []
+        self.button_color = button_color
 
         self.html_button_classes = ""
         self.button_colors_and_classes = {}
@@ -99,6 +103,8 @@ class Page:
         return added_button
 
     def build(self):
+        self.button_color = format_and_check_color(self.button_color)
+
         button_colors = []
 
         for button in self.all_buttons:

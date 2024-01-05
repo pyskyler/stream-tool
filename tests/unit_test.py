@@ -261,7 +261,7 @@ class TestAddButton(unittest.TestCase):
         page_html_colors = page_html_colors.encode("utf-8")
         page_html_buttons = page_html_buttons.encode("utf-8")
         self.assertIn(page_html_colors, server_page_html,
-                         "live html on server for button class colors does not match expected html")
+                      "live html on server for button class colors does not match expected html")
         self.assertIn(page_html_buttons, server_page_html,
                       "live html on server for button w/ colors does not match expected html")
 

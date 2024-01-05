@@ -72,8 +72,7 @@ class Website:
     def _build(self):
 
         for page in self.all_pages:
-            for button in page.all_buttons:
-                button.build()
+            page.build()
 
         @self._app.route('/')
         def show_index():
@@ -85,6 +84,7 @@ class Website:
         def show_page(page_name):
             if page_name in self.all_page_names:
                 return render_template("page_template.html",
+                                       colors=self.all_page_names[page_name].html_button_classes,
                                        part_2=self.all_page_names[page_name].html_part_2,
                                        part_4=self.all_page_names[page_name].html_part_4)
             elif page_name in self.buttons_with_functions:

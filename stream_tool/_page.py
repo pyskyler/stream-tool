@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from .exceptions import DuplicatePageNameError
-from._formatting_and_converting import format_page_name
+from._formatting_and_converting import format_page_name, format_and_check_color
 
 from typing import TYPE_CHECKING
 
@@ -28,6 +28,8 @@ class Page:
         self.all_buttons: list[Button] = []
         self.all_button_names: list[str] = []
 
+        self.html_button_classes = ""
+        self.button_colors_and_classes = {}
         self.html_part_2 = ""
         self.html_part_4 = ""
 
@@ -95,3 +97,25 @@ class Page:
         added_button: Button = Button(self, name, **kwargs)
         self.all_buttons.append(added_button)
         return added_button
+
+    def build(self):
+        button_colors = []
+
+        for button in self.all_buttons:
+            if button.color != "default":
+                button.color = format_and_check_color(button.color)
+                if button.color not in button_colors:
+                    button_colors.append(button.color)
+
+        for i in range(len(button_colors)):
+            if i == 0:
+                self.html_button_classes += f"\t\t"
+            this_color = button_colors[i]
+            this_color_class = f".button{i} {{background-color: {this_color};}} \n\t\t"
+
+            self.html_button_classes += this_color_class
+
+            self.button_colors_and_classes[this_color] = f"button{i}"
+
+        for button in self.all_buttons:
+            button.build()

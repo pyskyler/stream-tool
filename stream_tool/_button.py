@@ -17,6 +17,9 @@ class Button:
             The name of the button
         text: str
             Text for the button, defaults to the name parameter
+        color: str
+            Color of the button, defaults to "defualt" which is blue. Set it to a valid css color
+            name or a valid rgb hex color.
         button_function: callable
             Action for button to run on press
         button_function_args: list, Any
@@ -29,7 +32,8 @@ class Button:
         """
 
     def __init__(self, page: Page, name: str, button_function: callable = None, button_function_args: list = None,
-                 button_function_kwargs: dict = None, text: str = None,button_link: str = None):
+                 button_function_kwargs: dict = None, text: str = None, button_link: str = None,
+                 color: str = "default"):
         self._button_function = None
         self.page: Page = page
         self._name = None
@@ -44,6 +48,8 @@ class Button:
         self._button_function_kwargs = None
         self.button_function_kwargs = button_function_kwargs
         self.button_link = button_link
+        self.color = color
+        self.color_class = ""
 
     @property
     def button_function(self):
@@ -135,7 +141,7 @@ class Button:
     @property
     def button_html(self):
         return f"\n\t<div class='button-container'>" \
-               f"<button onclick='performAction{self.name}()'>{self.text}</button></div>"
+               f"<button {self.color_class}onclick='performAction{self.name}()'>{self.text}</button></div>"
 
     @property
     def button_function_script(self):
@@ -157,6 +163,11 @@ class Button:
         return button_link_script
 
     def build(self):
+        button_has_default_color = self.color == "default"
+        if not button_has_default_color:
+            self.color_class = self.page.button_colors_and_classes[self.color]
+            self.color_class = f"class={self.color_class} "
+
         self.page.html_part_2 += self.button_html
 
         button_has_function = self.button_function is not None
@@ -166,3 +177,5 @@ class Button:
         button_has_link = self.button_link is not None
         if button_has_link:
             self.page.html_part_4 += self.button_link_script
+
+

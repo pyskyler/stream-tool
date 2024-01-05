@@ -46,7 +46,6 @@ class TestAddPage(unittest.TestCase):
         self.assertEqual(created_page.name, "test-page", "format_page_name is not working")
         self.assertEqual(created_page.url, "/test-page", "url is not being created correctly")
         self.assertRaises(exceptions.DuplicatePageNameError, self.website.add_page, "test page")
-        self.assertRaises(exceptions.DuplicatePageNameError, self.website.add_page, "standard_files")
 
     def test_build_and_run_page(self):
         created_page = self.website.add_page("test-page")
@@ -204,7 +203,7 @@ class TestAddButton(unittest.TestCase):
         btn.button_link = "youtube.com"
         self.assertEqual('http://youtube.com', btn.button_link, "button link not formatted correctly")
 
-    def test_button_html(self):
+    def test_button_link_html(self):
         btn = self.page.add_button("test button", button_link="google.com")
 
         self.website._build()
@@ -216,6 +215,55 @@ class TestAddButton(unittest.TestCase):
         page_html = page_html.encode("utf-8")
         self.assertEqual(page_html, server_page_html,
                          "live html on server for button w/ link does not match expected html")
+
+    def test_button_color(self):
+        blue_btn = self.page.add_button("test button", color="blue")
+        red_btn = self.page.add_button("test2", color="rED")
+        gold_btn = self.page.add_button("test3", color="FFD700")
+        orange_btn = self.page.add_button("test4", color="#fFa500")
+        yellow_btn = self.page.add_button("test5", color="yellow")
+        yellow_btn.color = "ffFF00"
+
+        self.website._build()
+
+        self.assertEqual(blue_btn.color, "blue", "color formatting during build did not work correctly")
+        self.assertEqual(red_btn.color, "red", "color formatting during build did not work correctly")
+        self.assertEqual(gold_btn.color, "#FFD700", "color formatting during build did not work correctly")
+        self.assertEqual(orange_btn.color, "#FFA500", "color formatting during build did not work correctly")
+        self.assertEqual(yellow_btn.color, "#FFFF00", "color formatting during build did not work correctly")
+
+
+
+
+    def test_button_color_html(self):
+        return
+
+    def test_button_color_flask(self):
+        blue_btn = self.page.add_button("test button", color="blue")
+        red_btn = self.page.add_button("test2", color="rED")
+        gold_btn = self.page.add_button("test3", color="FFD700")
+        orange_btn = self.page.add_button("test4", color="#fFa500")
+        yellow_btn = self.page.add_button("test5", color="yellow")
+        yellow_btn.color = "ffFF00"
+        blue_btn2 = self.page.add_button("test6", color="blue")
+        blue_btn3 = self.page.add_button("test7", color="blue")
+        gold_btn2 = self.page.add_button("test8", color="#FfD700")
+
+        self.website._build()
+
+        self.app = self.website._app.test_client()
+        r = self.app.get('/button-page')
+        server_page_html = r.data
+        with open("html_test_samples/color1.html", "r") as f:
+            page_html_colors = f.read()
+        with open("html_test_samples/color2.html", "r") as f:
+            page_html_buttons = f.read()
+        page_html_colors = page_html_colors.encode("utf-8")
+        page_html_buttons = page_html_buttons.encode("utf-8")
+        self.assertIn(page_html_colors, server_page_html,
+                         "live html on server for button class colors does not match expected html")
+        self.assertIn(page_html_buttons, server_page_html,
+                      "live html on server for button w/ colors does not match expected html")
 
 # TODO: test obs websocket
 

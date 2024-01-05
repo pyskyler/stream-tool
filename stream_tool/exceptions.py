@@ -24,3 +24,8 @@ class DuplicateButtonNameError(DuplicateError):
 class ButtonNameSyntaxError(SyntaxError):
     """Button name includes invalid syntax for a button name"""
     pass
+
+
+class InvalidColorValueError(ValueError):
+    """Not a valid CSS color name or not valid css color hex number"""
+    pass

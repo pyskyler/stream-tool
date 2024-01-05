@@ -1,3 +1,5 @@
+from .exceptions import InvalidColorValueError
+
 
 def convert_to_pascal_case(string: str):
     string = string.replace("-", " ")
@@ -22,3 +24,22 @@ def format_page_name(page_name: str):
     page_name = page_name.replace(" ", "-")
     page_name = page_name.replace("_", "-")
     return page_name
+
+
+def format_and_check_color(color: str):
+    valid_css_colors = ["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive",
+                        "purple", "red", "silver", "teal", "white", "yellow"]
+    valid_hex_characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
+    color = color.lower()
+    if color in valid_css_colors:
+        return color
+    else:
+        if color[0] != "#":
+            color = f"#{color}"
+        color = color.upper()
+        if len(color) != 7:
+            raise InvalidColorValueError(f"The color name or hex supplied ({color}) is not valid in css")
+        for i in range(1, 7):
+            if color[i] not in valid_hex_characters:
+                raise InvalidColorValueError
+        return color

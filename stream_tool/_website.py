@@ -39,6 +39,7 @@ class Website:
         self.index_page = self.add_page('index')
         self.buttons_with_functions: dict[str, Button] = {}
         Website.one_website_made = True
+        self.use_linked_page_color = False
 
         if use_obs_websockets:
             self.ws = create_obs_websocket_manager()
@@ -80,6 +81,7 @@ class Website:
         def show_index():
             return render_template("page_template.html",
                                    button_color=self.all_page_names["index"].button_color,
+                                   colors=self.all_page_names["index"].html_button_classes,
                                    part_2=self.all_page_names["index"].html_part_2,
                                    part_4=self.all_page_names["index"].html_part_4)
 

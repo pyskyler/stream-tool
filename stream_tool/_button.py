@@ -47,9 +47,9 @@ class Button:
         self.button_function_args = button_function_args
         self._button_function_kwargs = None
         self.button_function_kwargs = button_function_kwargs
-        self.button_link = button_link
         self.color = color
         self.color_class = ""
+        self.button_link = button_link
 
     @property
     def button_function(self):
@@ -136,6 +136,19 @@ class Button:
         if link is None:
             self._button_link = link
         else:
+            if self.page.website.use_linked_page_color:
+
+                if link[0] == "/":
+                    if len(link) == 1:
+                        page_name = "index"
+                    else:
+                        page_name = link[1:]
+                    link_color = self.page.website.all_page_names[page_name].button_color
+                    self.color = link_color
+
+                elif self._button_link[0] == "/" and link[0] != "/":
+                    self.color = "default"
+
             self._button_link = format_url(link)
 
     @property

@@ -259,7 +259,7 @@ class TestAddButton(unittest.TestCase):
         self.assertIn(page_html_buttons, server_page_html,
                       "live html on server for button w/ colors does not match expected html")
 
-    def TestButtonDefaultColor(self):
+    def test_button_default_color(self):
         self.page.button_color = "aqua"
         page_2 = self.website.add_page("page2", button_color="FFFF00")
 
@@ -274,34 +274,34 @@ class TestAddButton(unittest.TestCase):
         server_page2_html = r2.data
         server_page3_html = r3.data
 
-        button1 = "button { \n\t\t\t\
-            width: 100%; \n\t\t\t\
-            height: 100%; \n\t\t\t\
-            border: none; \n\t\t\t\
-            background-color: aqua; \n\t\t\t\
-            color: white; \n\t\t\t\
-            font-size: 50px; \n\t\t\t\
-            border-radius: 25px; \n\t\t\
+        button1 = "button {\n\
+            width: 100%;\n\
+            height: 100%;\n\
+            border: none;\n\
+            background-color: aqua;\n\
+            color: white;\n\
+            font-size: 50px;\n\
+            border-radius: 25px;\n\
         }"
 
-        button2 = "button { \n\t\t\t\
-            width: 100%; \n\t\t\t\
-            height: 100%; \n\t\t\t\
-            border: none; \n\t\t\t\
-            background-color: #FFFF00; \n\t\t\t\
-            color: white; \n\t\t\t\
-            font-size: 50px; \n\t\t\t\
-            border-radius: 25px; \n\t\t\
+        button2 = "button {\n\
+            width: 100%;\n\
+            height: 100%;\n\
+            border: none;\n\
+            background-color: #FFFF00;\n\
+            color: white;\n\
+            font-size: 50px;\n\
+            border-radius: 25px;\n\
         }"
 
-        button3 = "button { \n\t\t\t\
-            width: 100%; \n\t\t\t\
-            height: 100%; \n\t\t\t\
-            border: none; \n\t\t\t\
-            background-color: #3498DB; \n\t\t\t\
-            color: white; \n\t\t\t\
-            font-size: 50px; \n\t\t\t\
-            border-radius: 25px; \n\t\t\
+        button3 = "button {\n\
+            width: 100%;\n\
+            height: 100%;\n\
+            border: none;\n\
+            background-color: #3498DB;\n\
+            color: white;\n\
+            font-size: 50px;\n\
+            border-radius: 25px;\n\
         }"
 
         button1 = button1.encode("utf-8")
@@ -315,10 +315,59 @@ class TestAddButton(unittest.TestCase):
                       "live html on server for page button default color does not match expected html")
 
 
-# TODO: test obs websocket
+class TestPageColor(unittest.TestCase):
 
-# TODO: test builtin obs actions maybe
+    def tearDown(self):
+        _website.Website.one_website_made = False
 
+    def setUp(self):
+        colors = ".button0 {background-color: aqua;} \n\t\t" \
+                 ".button1 {background-color: green;} \n\t\t" \
+                 ".button2 {background-color: red;} \n\t\t" \
+                 ".button3 {background-color: #3498DB;}"
+
+        buttons = "<div class='button-container'><button class=button0" \
+                  " onclick='performActionPage1()'>Page1</button></div>\n\t" \
+                  "<div class='button-container'><button class=button1" \
+                  " onclick='performActionPage2()'>Page2</button></div>\n\t" \
+                  "<div class='button-container'><button class=button2" \
+                  " onclick='performActionPage3()'>Page3</button></div>\n\t" \
+                  "<div class='button-container'><button class=button3" \
+                  " onclick='performActionIndex()'>Index</button></div>"
+
+        link1 = "function performActionPage1() {\n\t\t\t" \
+                "window.location.href = \"/page-1\";		}"
+        link2 = "function performActionPage2() {\n\t\t\t" \
+                "window.location.href = \"/Page-2\";		}"
+        link3 = "function performActionPage3() {\n\t\t\t" \
+                "window.location.href = \"/Page-3\";		}"
+        link4 = "function performActionIndex() {\n\t\t\t" \
+                "window.location.href = \"/\";		}"
+        self.needed_html = [colors, buttons, link1, link2, link3, link4]
+
+    def test_use_linked_page_color(self):
+        site = create_website()
+        site.use_linked_page_color = True
+
+        page1 = site.add_page("page 1", button_color="aqua")
+        page2 = site.add_page("Page 2", button_color="green")
+        page3 = site.add_page("Page 3", button_color="red")
+        btn_page = site.add_page("Button Page", button_color="yellow")
+
+        btn_page.add_button("page1", button_link=page1.url)
+        btn_page.add_button("page2", button_link=page2.url)
+        btn_page.add_button("page3", button_link=page3.url)
+        btn_page.add_button("index", button_link=site.index_page.url)
+
+        site._build()
+        app = site._app.test_client()
+        r = app.get('/Button-Page')
+        server_page_html = r.data
+
+        for html in self.needed_html:
+            html = html.encode("utf-8")
+            self.assertIn(html, server_page_html,
+                          f"live html on server for use_linked_page_color does not match expected line: {html}")
 
 if __name__ == '__main__':
     unittest.main()

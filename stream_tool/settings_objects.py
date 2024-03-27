@@ -143,8 +143,8 @@ class ButtonSettings(BaseSettings):
 
         self.text: str = "Test Text"  # default value
         self.function = None  # default value
-        self.function_args: list | None = None  # default value
-        self.function_kwargs: dict | None = None  # default value
+        self.function_args: list = []  # default value
+        self.function_kwargs: dict = {}  # default value
         self._color: str = 'default'
         self.color: str = 'default'  # default value
         self._link = None

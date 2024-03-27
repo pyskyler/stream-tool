@@ -11,6 +11,16 @@ Websockets_Auth
 builtin_obs_actions
     Actions to perform on OBS websockets
 
+
+Classes
+-------
+WebsiteSettings
+    Settings object for changing settings and preferences of the website.
+PageSettings
+    Settings object for changing settings and preferences of the pages.
+ButtonSettings
+    Settings object for changing settings and preferences of the buttons.
+
 Functions
 ---------
 create_website
@@ -20,29 +30,34 @@ Error Handling
 --------------
 These are the custom errors that can be raised by the program:
 
--- ButtonNameSyntaxError
-
 -- DuplicateError
-
--- DuplicateButtonNameError
 
 -- DuplicateWebsiteError
 
--- DuplicatePageNameError
+-- InvalidColorValueError
+
+-- InvalidSettingName
+
+-- DuplicateNameError
+
+-- MissingRequiredSettingsError
 
 The exceptions docstring contains more about their meaning
 
 """
-from ._core import create_website
+
+from ._core import create_website, WebsiteSettings, PageSettings, ButtonSettings
 from .exceptions import *
-from .Websockets_Auth import *
 from .builtin_obs_actions import *
 
 __all__ = ["create_website",
-           "ButtonNameSyntaxError",
+           "WebsiteSettings",
+           "PageSettings",
+           "ButtonSettings",
            "DuplicateError",
            "DuplicateWebsiteError",
-           "DuplicateButtonNameError",
-           "DuplicatePageNameError",
-           "Websockets_Auth",
+           "InvalidColorValueError",
+           "InvalidSettingName",
+           "DuplicateNameError",
+           "MissingRequiredSettingError",
            "builtin_obs_actions"]

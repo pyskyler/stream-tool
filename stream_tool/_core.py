@@ -1,8 +1,9 @@
 from . import _create_website
 from ._website import Website
+from .settings_objects import WebsiteSettings, PageSettings, ButtonSettings
 
 
-def create_website(use_obs_websockets=False) -> Website:
+def create_website(settings: WebsiteSettings = None) -> Website:
     """Create a web server with an index page
 
     Returns
@@ -12,8 +13,10 @@ def create_website(use_obs_websockets=False) -> Website:
 
     Parameters
     ----------
-    use_obs_websockets: Bool, default False
-        If set to true the website creates an OBS websocket managaer to communicate with OBS Websockets
+    settings: WebsiteSettings, optional
+        The settings object containing all the changeable settings for the website, if not passed
+         in, one will be created automatically.
+
 
     Examples
     --------
@@ -21,5 +24,11 @@ def create_website(use_obs_websockets=False) -> Website:
     >>> my_site = create_website()
 
     """
-    created_website: Website = _create_website.create_website(use_obs_websockets)
+
+    created_website: Website = _create_website.create_website(settings)
     return created_website
+
+
+WebsiteSettings = WebsiteSettings
+PageSettings = PageSettings
+ButtonSettings = ButtonSettings

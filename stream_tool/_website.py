@@ -10,8 +10,13 @@ from . import builtin_obs_actions
 
 from ._create_obs_websocket_manager import create_obs_websocket_manager
 
+from ._generators import ButtonNameGenerator
+
+from .settings_objects import PageSettings
+
 if TYPE_CHECKING:
     from ._button import Button
+    from .settings_objects import WebsiteSettings
 
 
 class Website:
@@ -19,42 +24,50 @@ class Website:
 
     Attributes
     ----------
-    index_page
+    settings: PageSettings
+        The settings object containing all the changeable settings for the page
+    index_page page
         The _page.Page object for the index page automatically created by the site
     ws
         An instance of obsws from package obs-websocket-py. Would be used to create custom OBS
         controls not provided in builtin_obs_actions and attach to a button function. Use its method
         call to perform custom actions. The OBS websockets manager created by the site if
         use_obs_websockets is True.
+    app
+        The Flask app object
+
 
     """
     one_website_made: bool = False
 
-    def __init__(self, use_obs_websockets=False):
-        self._app = Flask(__name__, template_folder="resources/templates",
-                          static_folder="resources/static", static_url_path="/static")
-        self.all_pages: list[Page] = []
-        self.all_page_names: dict[str, Page] = {}
-        self.restricted_use_names = ["standard_files"]
-        self.index_page = self.add_page('index')
-        self.buttons_with_functions: dict[str, Button] = {}
-        Website.one_website_made = True
-        self.use_linked_page_color = False
+    def __init__(self, settings: WebsiteSettings):
+        self.settings = settings
 
-        if use_obs_websockets:
-            self.ws = create_obs_websocket_manager()
+        self.app = Flask(__name__, template_folder="resources/templates",
+                         static_folder="resources/static", static_url_path="/static")
+        self.all_pages: list[Page] = []
+        self.pages_and_names: dict[str, Page] = {}
+
+        index_page_settings = PageSettings()
+        index_page_settings.name = "index"
+        self.index_page = self.add_page(index_page_settings)
+
+        Website.one_website_made = True
+
+        self.button_name_generator = ButtonNameGenerator()
+
+        if settings.use_obs_websockets:
+            self.ws = create_obs_websocket_manager(settings)
             builtin_obs_actions._ws = self.ws
 
-    def add_page(self, name: str, button_color: str = "#3498DB") -> Page:
+    def add_page(self, settings: PageSettings = None) -> Page:
         """ Add a page on the website
 
         Parameters
         ----------
-        name : str
-            name of page displayed in tab
-        button_color : str
-            the default color for the buttons on the page, default is "#3498db".
-            follows the same rules as the color attribute of Button class
+        settings: PageSettings, optional
+            The settings object containing all the changeable settings for the page, if not passed
+             in, one will be created automatically.
 
         Returns
         -------
@@ -68,43 +81,55 @@ class Website:
         >>> my_page = my_site.add_page('My-Page-Name')
 
         """
-        created_page: Page = Page(self, name, button_color)
+        if settings is None:
+            settings = PageSettings()
+
+        created_page: Page = Page(self, settings)
         self.all_pages.append(created_page)
         return created_page
 
     def _build(self):
+        self.settings.check_required_settings()
+
+        self.buttons_with_functions: dict[str, Button] = {}
+        for page in self.all_pages:
+            for button in page.all_buttons:
+                if button.settings.function is not None:
+                    self.buttons_with_functions[button.name] = button
+
+        self.pages_and_names: dict[str, Page] = {page.settings.name: page for page in self.all_pages}
 
         for page in self.all_pages:
             page.build()
 
-        @self._app.route('/')
+        @self.app.route('/')
         def show_index():
             return render_template("page_template.html",
-                                   button_color=self.all_page_names["index"].button_color,
-                                   colors=self.all_page_names["index"].html_button_classes,
-                                   part_2=self.all_page_names["index"].html_part_2,
-                                   part_4=self.all_page_names["index"].html_part_4)
+                                   button_color=self.pages_and_names["index"].settings.button_color,
+                                   colors=self.pages_and_names["index"].html_button_classes,
+                                   part_2=self.pages_and_names["index"].html_part_2,
+                                   part_4=self.pages_and_names["index"].html_part_4)
 
-        @self._app.route('/<page_name>')
+        @self.app.route('/<page_name>')
         def show_page(page_name):
-            if page_name in self.all_page_names:
+            if page_name in self.pages_and_names:
                 return render_template("page_template.html",
-                                       button_color=self.all_page_names[page_name].button_color,
-                                       colors=self.all_page_names[page_name].html_button_classes,
-                                       part_2=self.all_page_names[page_name].html_part_2,
-                                       part_4=self.all_page_names[page_name].html_part_4)
+                                       button_color=self.pages_and_names[page_name].settings.button_color,
+                                       colors=self.pages_and_names[page_name].html_button_classes,
+                                       part_2=self.pages_and_names[page_name].html_part_2,
+                                       part_4=self.pages_and_names[page_name].html_part_4)
             elif page_name in self.buttons_with_functions:
                 this_button = self.buttons_with_functions[page_name]
-                args = this_button.button_function_args
-                kwargs = this_button.button_function_kwargs
-                this_button.button_function(*args, **kwargs)
+                args = this_button.settings.function_args
+                kwargs = this_button.settings.function_kwargs
+                this_button.settings.function(*args, **kwargs)
                 return this_button.name
             else:
                 return render_template("404.html"), 404
 
     def _run(self, host='127.0.0.1', port=5000, debug=False):
 
-        self._app.run(host=host, port=port, debug=debug)
+        self.app.run(host=host, port=port, debug=debug)
 
     def build_and_run(self, host="127.0.0.1", port=5000, debug=False):
         """ Build website files and routes and run it
